@@ -15,6 +15,8 @@
             --primary: #00ff9d;       /* Verde Neon */
             --software: #00d9ff;      /* Azul */
             --hardware: #ff9d00;      /* Laranja */
+            --dream: #9d4edd;         /* Roxo */
+            --danger: #ff4444;        /* Vermelho */
             
             --text-main: #ffffff;
             --text-muted: #a1a1a1;
@@ -55,13 +57,22 @@
         /* --- INPUTS --- */
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.9rem; }
-        input, textarea {
+        input, textarea, select {
             width: 100%; padding: 14px; background: #000; border: 1px solid var(--border);
             border-radius: 8px; color: white; font-size: 1rem; transition: 0.3s;
         }
-        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
 
-        /* --- TELA DE IDENTIFICAÇÃO --- */
+        /* --- CHECKBOXES (DIAGNÓSTICO) --- */
+        .symptom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .symptom-item {
+            background: #222; padding: 10px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.2s;
+        }
+        .symptom-item:hover { border-color: var(--danger); }
+        .symptom-item input { width: 18px; height: 18px; margin: 0; accent-color: var(--danger); }
+
+        /* --- TELA IDENTIFICAÇÃO --- */
         #step-identity {
             max-width: 480px; margin: 60px auto; background: var(--bg-panel);
             padding: 40px; border-radius: 16px; border: 1px solid var(--border);
@@ -69,10 +80,9 @@
             animation: fadeInUp 0.6s ease;
         }
 
-        /* --- MENU DE SERVIÇOS --- */
+        /* --- MENU --- */
         #step-menu { display: none; animation: fadeIn 0.5s ease; }
 
-        /* Títulos Principais */
         .main-group-title {
             font-size: 2rem; font-weight: 800; text-transform: uppercase;
             margin-top: 60px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px;
@@ -81,49 +91,44 @@
         .sw-title { color: var(--software); border-color: var(--software); }
         .hw-title { color: var(--hardware); border-color: var(--hardware); }
 
-        /* SUB-GRUPOS */
         .sub-group-container {
             background: rgba(255,255,255,0.02);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            position: relative;
+            border-radius: 12px; padding: 25px; margin-bottom: 30px; position: relative;
         }
-
         .sub-group-header {
             font-size: 1.2rem; font-weight: 700; color: var(--text-main);
             margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
         }
         .sub-icon { opacity: 0.8; font-size: 1.4rem; }
 
-        /* GRID DE CARDS */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
         .service-card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 8px; padding: 15px; cursor: pointer;
             transition: 0.2s; position: relative; overflow: hidden;
         }
-
         .service-card:hover { transform: translateY(-3px); }
 
-        /* Temas */
         .sw-card:hover { border-color: var(--software); box-shadow: var(--glow-soft); }
         .sw-card.selected { background: rgba(0, 217, 255, 0.1); border-color: var(--software); }
         
         .hw-card:hover { border-color: var(--hardware); box-shadow: var(--glow-hard); }
         .hw-card.selected { background: rgba(255, 157, 0, 0.1); border-color: var(--hardware); }
 
+        /* Animação de Recomendação */
+        @keyframes pulse-recommend {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); border-color: var(--primary); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 157, 0); border-color: var(--primary); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+        }
+        .recommended-pulse { animation: pulse-recommend 1.5s infinite; }
+
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .service-name { font-weight: 600; font-size: 0.95rem; line-height: 1.3; color: #ddd; }
         .price-tag { font-size: 1.1rem; font-weight: 800; color: #fff; }
 
-        /* Checkbox Visual */
         .check-circle {
             width: 20px; height: 20px; border-radius: 50%; border: 2px solid #555;
             position: relative; flex-shrink: 0; margin-left: 10px; transition: 0.2s;
@@ -134,7 +139,6 @@
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
 
-        /* BADGES */
         .badge {
             font-size: 0.65rem; text-transform: uppercase; font-weight: bold;
             padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;
@@ -142,56 +146,52 @@
         .bg-sw { background: rgba(0, 217, 255, 0.2); color: var(--software); }
         .bg-hw { background: rgba(255, 157, 0, 0.2); color: var(--hardware); }
 
-        /* --- ESTILOS DO MODAL DE DEMO --- */
-        .demo-badge {
-            font-size: 0.7rem; 
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            margin-top: 8px; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 5px; 
-            cursor: pointer; 
-            transition: 0.3s;
-            z-index: 10; position: relative;
+        .card-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+        .demo-badge, .warning-badge {
+            font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; display: inline-flex; 
+            align-items: center; gap: 5px; cursor: pointer; transition: 0.3s; z-index: 10; position: relative;
         }
+        .demo-badge { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; }
         .demo-badge:hover { background: white; color: black; border-color: white; }
+        .warning-badge { background: rgba(255, 157, 0, 0.15); border: 1px solid #ff9d00; color: #ff9d00; }
+        .warning-badge:hover { background: #ff9d00; color: black; }
 
-        /* O Fundo Escuro do Modal */
+        /* --- TOAST DE RECOMENDAÇÃO --- */
+        #toast-notification {
+            position: fixed; top: 20px; right: 20px; z-index: 4000;
+            background: rgba(0, 255, 157, 0.1); border: 1px solid var(--primary);
+            color: white; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            display: none; animation: slideInRight 0.5s ease; max-width: 300px;
+        }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- SEÇÕES ESPECIAIS --- */
+        .dream-section, .diagnosis-section {
+            border-radius: 12px; padding: 30px; margin-top: 30px; display: none; animation: fadeInUp 0.5s ease;
+        }
+        .dream-section { background: linear-gradient(135deg, rgba(20,20,20,1) 0%, rgba(30,10,40,1) 100%); border: 1px solid var(--dream); }
+        .diagnosis-section { background: linear-gradient(135deg, rgba(40,10,10,1) 0%, rgba(20,20,20,1) 100%); border: 1px solid var(--danger); }
+        .special-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .dream-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        @media (max-width: 600px) { .dream-grid, .symptom-grid { grid-template-columns: 1fr; } }
+
+        /* --- MODAL --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); 
-            z-index: 3000; /* BEM ALTO PARA FICAR EM CIMA DE TUDO */
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); 
+            z-index: 3000; display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px); animation: fadeIn 0.3s;
         }
-
-        /* A Caixa do Conteúdo */
         .modal-content {
-            background: #1a1a1a; width: 90%; max-width: 500px;
-            padding: 25px; border-radius: 15px; border: 1px solid var(--primary);
-            text-align: center; position: relative;
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+            background: #1a1a1a; width: 90%; max-width: 500px; padding: 25px; 
+            border-radius: 15px; border: 1px solid var(--primary); text-align: center; position: relative;
         }
-
-        .modal-close {
-            position: absolute; top: 10px; right: 15px;
-            color: #fff; font-size: 1.5rem; cursor: pointer;
-        }
-
-        /* Estilos internos do player */
+        .modal-close { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 1.5rem; cursor: pointer; }
         .demo-video { width: 100%; border-radius: 8px; margin-top: 10px; }
-        .audio-box { 
-            background: #222; padding: 15px; border-radius: 8px; 
-            margin: 10px 0; border-left: 3px solid var(--software); text-align: left; 
-        }
+        .audio-box { background: #222; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid var(--software); text-align: left; }
         .audio-label { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; display: block; }
 
-        /* FOOTER */
+        /* --- FOOTER --- */
         .sticky-footer {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 800px; background: rgba(10,10,10,0.95);
@@ -200,25 +200,15 @@
             justify-content: space-between; align-items: center; z-index: 2000;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        
         .total-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        
         .btn-finish {
             background: var(--primary); color: black; border: none; padding: 12px 30px;
-            font-weight: 800; border-radius: 30px; cursor: pointer; text-transform: uppercase;
-            transition: 0.3s;
+            font-weight: 800; border-radius: 30px; cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
         .btn-finish:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,157,0.4); }
 
-        /* Animações */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        @media (max-width: 768px) {
-            .services-grid { grid-template-columns: 1fr; }
-            .sticky-footer { flex-direction: column; border-radius: 15px; width: 95%; gap: 10px; }
-            .btn-finish { width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -229,8 +219,11 @@
         </div>
     </header>
 
+    <div id="toast-notification">
+        <strong>💡 Dica:</strong> <span id="toast-msg"></span>
+    </div>
+
     <div class="container">
-        
         <div id="step-identity">
             <h2 style="margin-bottom: 20px; color: white;">Identificação</h2>
             <div class="input-group">
@@ -246,21 +239,22 @@
 
         <div id="step-menu">
 
-            <div class="main-group-title sw-title">
-                💻 GRUPO WINDOWS (SOFTWARE)
-            </div>
+            <div class="main-group-title sw-title">💻 GRUPO WINDOWS (SOFTWARE)</div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header">
-                    <span class="sub-icon">🛠️</span> Manutenção Essencial
-                </div>
+                <div class="sub-group-header"><span class="sub-icon">🛠️</span> Manutenção Essencial</div>
                 <div class="services-grid">
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Formatação Limpa', 120)">
                         <div class="card-header"><span class="service-name">Formatação Limpa</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 120,00</div>
                     </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Ativação Windows (Key)', 50)">
+                        <div class="card-header"><span class="service-name">Ativação Windows (Chave Digital)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 50,00</div>
+                        <span class="badge bg-sw">ORIGINAL</span>
+                    </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Backup de Arquivos', 45)">
-                        <div class="card-header"><span class="service-name">Backup de Arquivos (Até 50GB)</span><div class="check-circle"></div></div>
+                        <div class="card-header"><span class="service-name">Backup (Arquivos Essenciais - Até 5GB)</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 45,00</div>
                     </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Instalação de Programas', 25)">
@@ -271,15 +265,13 @@
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header">
-                    <span class="sub-icon">🚀</span> Performance & Gamer
-                </div>
+                <div class="sub-group-header"><span class="sub-icon">🚀</span> Performance & Gamer</div>
                 <div class="services-grid">
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Otimização Windows', 70)">
                         <div class="card-header"><span class="service-name">Otimização Windows (Debloat)</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 70,00</div>
                         <span class="badge bg-sw">MAIS FPS</span>
-                        <div class="demo-badge" onclick="openDemo(event, 'fps')">▷ Ver Ganho de FPS</div>
+                        <div class="card-actions"><div class="demo-badge" onclick="openDemo(event, 'fps')">▷ Ver Ganho de FPS</div></div>
                     </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Renovação Drivers', 45)">
                         <div class="card-header"><span class="service-name">Renovação Drivers (Update+Limpeza)</span><div class="check-circle"></div></div>
@@ -303,19 +295,20 @@
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header">
-                    <span class="sub-icon">🎙️</span> Studio & Stream
-                </div>
+                <div class="sub-group-header"><span class="sub-icon">🎙️</span> Studio & Stream</div>
                 <div class="services-grid">
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Config Microfone Pro', 125)">
                         <div class="card-header"><span class="service-name">Config. Microfone Pro</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 125,00</div>
-                        <div class="demo-badge" onclick="openDemo(event, 'mic')">🔊 Ouvir Antes/Depois</div>
+                        <div class="card-actions"><div class="demo-badge" onclick="openDemo(event, 'mic')">🔊 Ouvir Antes/Depois</div></div>
                     </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Calibração Monitor', 60)">
                         <div class="card-header"><span class="service-name">Calibração Monitor</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 60,00</div>
-                        <div class="demo-badge" onclick="openDemo(event, 'color')">👁️ Ver Cores Reais</div>
+                        <div class="card-actions">
+                            <div class="demo-badge" onclick="openDemo(event, 'color')">👁️ Ver Cores Reais</div>
+                            <div class="warning-badge" onclick="openWarning(event)">⚠️ Ler Aviso</div>
+                        </div>
                     </div>
                      <div class="service-card sw-card" onclick="toggleItem(this, 'Config OBS Studio', 50)">
                         <div class="card-header"><span class="service-name">Config OBS Studio</span><div class="check-circle"></div></div>
@@ -329,15 +322,10 @@
                 </div>
             </div>
 
-
-            <div class="main-group-title hw-title">
-                🔧 GRUPO HARDWARE (FÍSICO)
-            </div>
+            <div class="main-group-title hw-title">🔧 GRUPO HARDWARE (FÍSICO)</div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
-                <div class="sub-group-header">
-                    <span class="sub-icon">🧹</span> Cuidados & Manutenção
-                </div>
+                <div class="sub-group-header"><span class="sub-icon">🧹</span> Cuidados & Manutenção</div>
                 <div class="services-grid">
                     <div class="service-card hw-card" onclick="toggleItem(this, 'Limpeza Premium (c/ Pasta)', 120)">
                         <div class="card-header"><span class="service-name">Limpeza Premium (c/ Pasta Térmica)</span><div class="check-circle"></div></div>
@@ -352,14 +340,19 @@
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
-                <div class="sub-group-header">
-                    <span class="sub-icon">🏗️</span> Montagem & Técnica
-                </div>
+                <div class="sub-group-header"><span class="sub-icon">🏗️</span> Montagem & Técnica</div>
                 <div class="services-grid">
                     <div class="service-card hw-card" onclick="toggleItem(this, 'Montagem de PC', 225)">
                         <div class="card-header"><span class="service-name">Montagem de PC</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 225,00</div>
                     </div>
+                    
+                    <div class="service-card hw-card" onclick="toggleItem(this, 'Consultoria de Peças', 35)">
+                        <div class="card-header"><span class="service-name">Consultoria de Peças (Setup)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 35,00</div>
+                        <span class="badge bg-hw">ECONOMIZE NA COMPRA</span>
+                    </div>
+
                     <div class="service-card hw-card" onclick="toggleItem(this, 'Diagnóstico Defeito', 50)">
                         <div class="card-header"><span class="service-name">Diagnóstico Defeito</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 50,00</div>
@@ -367,183 +360,168 @@
                 </div>
             </div>
 
-            <div class="sub-group-container" style="background: var(--bg-panel);">
-                <h3 style="margin-bottom: 10px; color: white;">📝 Observações</h3>
-                <textarea id="input-feedback" rows="3" placeholder="Ex: Preciso que o PC fique pronto até sexta..."></textarea>
+            <div class="diagnosis-section" id="diagnosis-section-container">
+                <div class="special-title" style="color: var(--danger);">🚨 DIAGNÓSTICO PRELIMINAR</div>
+                <div class="symptom-grid">
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Não Liga"> Não Liga</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Liga sem Imagem"> Liga sem Imagem</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Tela Azul"> Tela Azul</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Travando/Lento"> Lento/Travando</label>
+                </div>
+                <div class="input-group"><textarea id="diagnosis-details" rows="2" placeholder="Descreva o problema..."></textarea></div>
             </div>
 
-        </div> </div>
+            <div class="dream-section" id="dream-section-container">
+                <div class="special-title" style="color: var(--dream);">💭 PC DOS SONHOS</div>
+                <div class="dream-grid">
+                    <div class="input-group"><label>💰 Orçamento</label><input type="text" id="dream-budget" placeholder="R$ 0,00"></div>
+                    <div class="input-group"><label>🎯 Uso</label><select id="dream-usage" style="background:#000;color:white;border:1px solid #333;padding:14px;border-radius:8px;"><option value="">Selecione...</option><option value="Jogos">Jogos</option><option value="Trabalho">Trabalho</option></select></div>
+                </div>
+                <div class="input-group"><textarea id="dream-details" rows="2" placeholder="Detalhes..."></textarea></div>
+            </div>
+
+            <div class="sub-group-container" style="background: var(--bg-panel); margin-top: 20px;">
+                <h3 style="margin-bottom: 10px; color: white;">Outras Observações</h3>
+                <textarea id="input-feedback" rows="2"></textarea>
+            </div>
+
+        </div> 
+    </div>
 
     <div id="demo-modal" class="modal-overlay" onclick="closeDemo(event)">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeDemoExplicit()">×</span>
-            <h3 id="modal-title" style="margin-bottom: 15px; color: var(--primary);">Demonstração</h3>
-            <div id="modal-body">
-                </div>
-        </div>
+        <div class="modal-content"><span class="modal-close" onclick="closeDemoExplicit()">×</span><h3 id="modal-title" style="margin-bottom:15px;">Demonstração</h3><div id="modal-body"></div></div>
     </div>
 
     <div class="sticky-footer" id="footer-cart">
-        <div>
-            <div style="font-size:0.8rem; color:#aaa;">TOTAL ESTIMADO</div>
-            <div class="total-val" id="total-display">R$ 0,00</div>
-        </div>
+        <div><div style="font-size:0.8rem; color:#aaa;">TOTAL ESTIMADO</div><div class="total-val" id="total-display">R$ 0,00</div></div>
         <button class="btn-finish" id="btn-finish" onclick="finishOrder()">ENVIAR PEDIDO 📲</button>
     </div>
 
     <script>
-        // ===============================================
-        // CONFIGURAÇÕES
-        // ===============================================
         const MY_WHATSAPP = "5513998059374"; 
         const SHEET_URL = "https://api.sheetmonkey.io/form/nscyFYxznN7wnU9F4RhVsR";
+        let cart = []; let total = 0; let clientData = {};
 
-        let cart = [];
-        let total = 0;
-        let clientData = {};
+        // MAPA DE RECOMENDAÇÕES (Se marcar X, sugere Y)
+        const recommendations = {
+            'Otimização Windows': 'Renovação Drivers',
+            'Renovação Drivers': 'Otimização Windows', // Dica do cliente: Vice-versa
+            'Formatação Limpa': 'Backup de Arquivos',
+            'Montagem de PC': 'Consultoria de Peças'
+        };
 
         function maskPhone(input) {
-            let v = input.value.replace(/\D/g,'');
-            v = v.replace(/^(\d\d)(\d)/g,"($1) $2");
-            v = v.replace(/(\d{5})(\d)/," $1-$2");
-            input.value = v;
+            let v = input.value.replace(/\D/g,''); v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); v=v.replace(/(\d{5})(\d)/," $1-$2"); input.value = v;
         }
 
         function goToMenu() {
             const name = document.getElementById('input-name').value;
             const phone = document.getElementById('input-phone').value;
-            
-            if(name.length < 3 || phone.length < 13) {
-                alert("Preencha seu Nome e WhatsApp corretamente.");
-                return;
-            }
+            if(name.length < 3 || phone.length < 13) { alert("Preencha Nome e WhatsApp."); return; }
             clientData = { name, phone };
-            
-            document.getElementById('step-identity').style.display = 'none';
-            document.getElementById('step-menu').style.display = 'block';
-            document.getElementById('footer-cart').style.display = 'flex';
-            window.scrollTo(0,0);
+            document.getElementById('step-identity').style.display='none'; document.getElementById('step-menu').style.display='block'; document.getElementById('footer-cart').style.display='flex'; window.scrollTo(0,0);
+        }
+
+        // Função de Recomendação (Toast)
+        function checkRecommendation(selectedName) {
+            // Verifica se o item clicado tem uma recomendação cadastrada
+            // E verifica se essa recomendação JÁ NÃO está no carrinho (para não recomendar o que ele já comprou)
+            Object.keys(recommendations).forEach(trigger => {
+                if (selectedName.includes(trigger)) { // Se clicou no gatilho
+                    const targetName = recommendations[trigger];
+                    
+                    // Verifica se o alvo já está no carrinho
+                    const targetInCart = cart.some(item => item.includes(targetName.split(' ')[0])); // Check flexível
+
+                    if (!targetInCart) {
+                        showToast(`💡 Dica: Quem leva <b>${selectedName}</b> costuma levar <b>${targetName}</b> também!`);
+                        highlightCard(targetName);
+                    }
+                }
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.innerHTML = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 5000);
+        }
+
+        function highlightCard(partialName) {
+            const cards = document.querySelectorAll('.service-card');
+            cards.forEach(card => {
+                if(card.innerText.includes(partialName)) {
+                    card.classList.add('recommended-pulse');
+                    setTimeout(() => card.classList.remove('recommended-pulse'), 3000);
+                }
+            });
         }
 
         function toggleItem(el, name, price) {
             if(el.classList.contains('selected')) {
-                el.classList.remove('selected');
-                total -= price;
-                cart = cart.filter(i => i !== name);
+                el.classList.remove('selected'); total -= price; cart = cart.filter(i => i !== name);
+                if(name === 'Consultoria de Peças') document.getElementById('dream-section-container').style.display = 'none';
+                if(name === 'Diagnóstico Defeito') document.getElementById('diagnosis-section-container').style.display = 'none';
             } else {
-                el.classList.add('selected');
-                total += price;
-                cart.push(name);
+                el.classList.add('selected'); total += price; cart.push(name);
+                if(name === 'Consultoria de Peças') { const sec = document.getElementById('dream-section-container'); sec.style.display = 'block'; setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 100); }
+                if(name === 'Diagnóstico Defeito') { const sec = document.getElementById('diagnosis-section-container'); sec.style.display = 'block'; setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 100); }
+                
+                // DISPARA A RECOMENDAÇÃO
+                checkRecommendation(name);
             }
             document.getElementById('total-display').innerText = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
         }
 
         async function finishOrder() {
+            const feedback = document.getElementById('input-feedback').value;
+            const dreamBudget = document.getElementById('dream-budget').value; const dreamUsage = document.getElementById('dream-usage').value; const dreamDetails = document.getElementById('dream-details').value;
+            let diagnosisList = []; document.querySelectorAll('input[name="sintoma"]:checked').forEach(cb => diagnosisList.push(cb.value)); const diagnosisDetails = document.getElementById('diagnosis-details').value;
+
             if(cart.length === 0) { alert("Selecione algo!"); return; }
             
-            const btn = document.getElementById('btn-finish');
-            const feedback = document.getElementById('input-feedback').value;
-            btn.innerHTML = "ENVIANDO..."; btn.disabled = true;
-
-            const now = new Date();
-            const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
-            
-            // CORREÇÃO DATA: Adicionado aspas simples
+            const btn = document.getElementById('btn-finish'); btn.innerHTML = "ENVIANDO..."; btn.disabled = true;
+            const now = new Date(); const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
             const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
-            const data = {
-                "Data": dateStr, 
-                "ID": orderID, 
-                "Cliente": clientData.name, 
-                "Telefone": clientData.phone,
-                "Servicos": cart.join(" | "), 
-                "Total": `R$ ${total.toFixed(2).replace('.', ',')}`,
-                "Observacoes": feedback
-            };
+            let fullObs = feedback;
+            if(cart.includes('Consultoria de Peças') && (dreamUsage || dreamDetails)) fullObs += ` | [PC SONHOS]: ${dreamBudget} - ${dreamUsage} - ${dreamDetails}`;
+            if(cart.includes('Diagnóstico Defeito') && (diagnosisList.length > 0 || diagnosisDetails)) fullObs += ` | [DIAGNÓSTICO]: ${diagnosisList.join(', ')} - ${diagnosisDetails}`;
 
-            let msgZap = `Olá! Fiz o *Pedido ${orderID}* pelo site.\n`;
-            msgZap += `👤 *Cliente:* ${clientData.name}\n`;
-            msgZap += `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n`;
-            msgZap += `Aguardo confirmação!`;
+            const data = { "Data": dateStr, "ID": orderID, "Cliente": clientData.name, "Telefone": clientData.phone, "Servicos": cart.join(" | "), "Total": `R$ ${total.toFixed(2).replace('.', ',')}`, "Observacoes": fullObs };
+
+            let msgZap = `Olá! Fiz o *Pedido ${orderID}*.\n👤 *${clientData.name}*\n💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            if(cart.includes('Consultoria de Peças')) msgZap += `\n💭 *PC SONHOS:* ${dreamUsage} (${dreamBudget})\n`;
+            if(cart.includes('Diagnóstico Defeito')) msgZap += `\n🚨 *SINTOMAS:* ${diagnosisList.join(', ')}\n`;
+            msgZap += `\nAguardo retorno!`;
 
             try {
-                await fetch(SHEET_URL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
+                await fetch(SHEET_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
                 window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`, '_blank');
                 btn.innerHTML = "ENVIADO! ✅";
-
             } catch (error) {
-                console.error("Erro no Excel:", error);
-                let msgFallback = `Olá! O site teve um erro no Excel, então aqui está o pedido completo:\n`;
-                msgFallback += `*Pedido ${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}\n💰 Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+                let msgFallback = `Olá! Erro no site. Pedido manual:\n*${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}`;
                 window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgFallback)}`, '_blank');
                 btn.innerHTML = "ENVIADO (OFFLINE)";
-            } finally {
-                btn.disabled = false;
-            }
+            } finally { btn.disabled = false; }
         }
 
-        // --- SISTEMA DE DEMONSTRAÇÃO ---
         function openDemo(event, type) {
-            event.stopPropagation();
-            const modal = document.getElementById('demo-modal');
-            const title = document.getElementById('modal-title');
-            const body = document.getElementById('modal-body');
-            
-            modal.style.display = 'flex'; 
-
-            if (type === 'mic') {
-                title.innerText = "🎙️ Teste de Microfone";
-                body.innerHTML = `
-                    <div class="audio-box">
-                        <span class="audio-label">❌ ANTES (Chiado/Ruído):</span>
-                        <audio controls style="width: 100%" src="mic_antes.mp3"></audio>
-                    </div>
-                    <div class="audio-box" style="border-color: var(--primary)">
-                        <span class="audio-label">✅ DEPOIS (Voz de Estúdio):</span>
-                        <audio controls style="width: 100%" src="mic_depois.mp3"></audio>
-                    </div>
-                    <p style="font-size:0.8rem; color:#888; margin-top:10px">Otimização via software.</p>
-                `;
-            } 
-            else if (type === 'fps') {
-                title.innerText = "🚀 Ganho de Performance";
-                body.innerHTML = `
-                    <video class="demo-video" controls autoplay loop muted>
-                        <source src="fps_demo.mp4" type="video/mp4">
-                        Seu navegador não suporta vídeo.
-                    </video>
-                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold">
-                        <span style="color:#f55">Antes: ~45 FPS</span>
-                        <span style="color:var(--primary)">Depois: ~120 FPS</span>
-                    </div>
-                `;
-            }
-            else if (type === 'color') {
-                title.innerText = "🎨 Calibração de Cores";
-                body.innerHTML = `
-                    <video class="demo-video" controls autoplay loop muted>
-                        <source src="cores_demo.mp4" type="video/mp4">
-                    </video>
-                    <p style="margin-top:10px">Esquerda: Padrão | Direita: Calibrado</p>
-                `;
-            }
+            event.stopPropagation(); const modal = document.getElementById('demo-modal'); const title = document.getElementById('modal-title'); const body = document.getElementById('modal-body');
+            title.style.color = "var(--primary)"; modal.style.display = 'flex';
+            if (type === 'mic') { title.innerText = "🎙️ Mic Test"; body.innerHTML = `<div class="audio-box"><span>❌ ANTES:</span><audio controls style="width:100%" src="mic_antes.mp3"></audio></div><div class="audio-box" style="border-color:var(--primary)"><span>✅ DEPOIS:</span><audio controls style="width:100%" src="mic_depois.mp3"></audio></div>`; } 
+            else if (type === 'fps') { title.innerText = "🚀 FPS Boost"; body.innerHTML = `<video class="demo-video" controls autoplay loop muted><source src="fps_demo.mp4" type="video/mp4"></video><div style="display:flex;justify-content:space-between;margin-top:10px"><span>Antes: ~45</span><span style="color:var(--primary)">Depois: ~120</span></div>`; }
+            else if (type === 'color') { title.innerText = "🎨 Cores"; body.innerHTML = `<img class="demo-video" src="cores_demo.jpg"><p style="margin-top:10px">Esq: Padrão | Dir: Calibrado</p>`; }
         }
-
-        function closeDemo(event) {
-            if (event.target.id === 'demo-modal') {
-                document.getElementById('demo-modal').style.display = 'none';
-                document.getElementById('modal-body').innerHTML = '';
-            }
+        function openWarning(event) {
+            event.stopPropagation(); document.getElementById('demo-modal').style.display='flex'; 
+            document.getElementById('modal-title').innerText="⚠️ Aviso Cor"; document.getElementById('modal-title').style.color="#ff9d00";
+            document.getElementById('modal-body').innerHTML = `<p style="color:#ccc;text-align:left">A câmera não capta o que o olho vê. A foto pode parecer escura ou saturada, mas ao vivo a calibração é perfeita.</p><button onclick="closeDemoExplicit()" style="margin-top:20px;width:100%;padding:10px;background:#333;color:white;border:none;border-radius:5px">Entendi</button>`;
         }
-
-        function closeDemoExplicit() {
-            document.getElementById('demo-modal').style.display = 'none';
-            document.getElementById('modal-body').innerHTML = '';
-        }
+        function closeDemo(event) { if (event.target.id === 'demo-modal') closeDemoExplicit(); }
+        function closeDemoExplicit() { document.getElementById('demo-modal').style.display = 'none'; document.getElementById('modal-body').innerHTML = ''; }
     </script>
 </body>
 </html>
