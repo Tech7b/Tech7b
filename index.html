@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurador Técnico | Tech Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- VARIÁVEIS DE SISTEMA --- */
+        :root {
+            --bg-body: #050505;
+            --bg-panel: #121212;
+            --bg-card: #181818;
+            
+            --primary: #00ff9d;       /* Verde Neon */
+            --software: #00d9ff;      /* Azul */
+            --hardware: #ff9d00;      /* Laranja */
+            
+            --text-main: #ffffff;
+            --text-muted: #a1a1a1;
+            --border: #333333;
+            
+            --glow-soft: 0 0 20px rgba(0, 217, 255, 0.15);
+            --glow-hard: 0 0 20px rgba(255, 157, 0, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            min-height: 100vh;
+            padding-bottom: 140px;
+        }
+
+        /* --- CABEÇALHO --- */
+        header {
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--primary);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; }
+        .brand span { color: var(--primary); }
+
+        /* --- INPUTS --- */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 0.9rem; }
+        input, textarea {
+            width: 100%; padding: 14px; background: #000; border: 1px solid var(--border);
+            border-radius: 8px; color: white; font-size: 1rem; transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
+
+        /* --- TELA DE IDENTIFICAÇÃO --- */
+        #step-identity {
+            max-width: 480px; margin: 60px auto; background: var(--bg-panel);
+            padding: 40px; border-radius: 16px; border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        /* --- MENU DE SERVIÇOS --- */
+        #step-menu { display: none; animation: fadeIn 0.5s ease; }
+
+        /* Títulos Principais */
+        .main-group-title {
+            font-size: 2rem; font-weight: 800; text-transform: uppercase;
+            margin-top: 60px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px;
+            border-bottom: 2px solid; padding-bottom: 10px;
+        }
+        .sw-title { color: var(--software); border-color: var(--software); }
+        .hw-title { color: var(--hardware); border-color: var(--hardware); }
+
+        /* SUB-GRUPOS */
+        .sub-group-container {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .sub-group-header {
+            font-size: 1.2rem; font-weight: 700; color: var(--text-main);
+            margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        .sub-icon { opacity: 0.8; font-size: 1.4rem; }
+
+        /* GRID DE CARDS */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 15px; cursor: pointer;
+            transition: 0.2s; position: relative; overflow: hidden;
+        }
+
+        .service-card:hover { transform: translateY(-3px); }
+
+        /* Temas */
+        .sw-card:hover { border-color: var(--software); box-shadow: var(--glow-soft); }
+        .sw-card.selected { background: rgba(0, 217, 255, 0.1); border-color: var(--software); }
+        
+        .hw-card:hover { border-color: var(--hardware); box-shadow: var(--glow-hard); }
+        .hw-card.selected { background: rgba(255, 157, 0, 0.1); border-color: var(--hardware); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .service-name { font-weight: 600; font-size: 0.95rem; line-height: 1.3; color: #ddd; }
+        .price-tag { font-size: 1.1rem; font-weight: 800; color: #fff; }
+
+        /* Checkbox Visual */
+        .check-circle {
+            width: 20px; height: 20px; border-radius: 50%; border: 2px solid #555;
+            position: relative; flex-shrink: 0; margin-left: 10px; transition: 0.2s;
+        }
+        .selected .check-circle { background: white; border-color: white; }
+        .selected .check-circle::after {
+            content: '✓'; color: black; font-size: 14px; font-weight: bold;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        /* BADGES */
+        .badge {
+            font-size: 0.65rem; text-transform: uppercase; font-weight: bold;
+            padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;
+        }
+        .bg-sw { background: rgba(0, 217, 255, 0.2); color: var(--software); }
+        .bg-hw { background: rgba(255, 157, 0, 0.2); color: var(--hardware); }
+
+        /* FOOTER */
+        .sticky-footer {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 800px; background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px); border: 1px solid var(--primary);
+            border-radius: 50px; padding: 15px 30px; display: none;
+            justify-content: space-between; align-items: center; z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .total-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        
+        .btn-finish {
+            background: var(--primary); color: black; border: none; padding: 12px 30px;
+            font-weight: 800; border-radius: 30px; cursor: pointer; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .btn-finish:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,157,0.4); }
+
+        /* Animações */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .sticky-footer { flex-direction: column; border-radius: 15px; width: 95%; gap: 10px; }
+            .btn-finish { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="brand">SEU NOME <span>TECH</span></div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div id="step-identity">
+            <h2 style="margin-bottom: 20px; color: white;">Identificação</h2>
+            <div class="input-group">
+                <label>Nome Completo</label>
+                <input type="text" id="input-name" placeholder="Seu nome">
+            </div>
+            <div class="input-group">
+                <label>WhatsApp</label>
+                <input type="tel" id="input-phone" placeholder="(XX) XXXXX-XXXX" maxlength="16" onkeyup="maskPhone(this)">
+            </div>
+            <button class="btn-finish" style="width:100%" onclick="goToMenu()">ACESSAR PLANOS ➔</button>
+        </div>
+
+        <div id="step-menu">
+
+            <div class="main-group-title sw-title">
+                💻 GRUPO WINDOWS (SOFTWARE)
+            </div>
+
+            <div class="sub-group-container" style="border-left: 3px solid var(--software);">
+                <div class="sub-group-header">
+                    <span class="sub-icon">🛠️</span> Manutenção Essencial
+                </div>
+                <div class="services-grid">
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Formatação Limpa', 120)">
+                        <div class="card-header"><span class="service-name">Formatação Limpa</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 120,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Backup de Arquivos', 45)">
+                        <div class="card-header"><span class="service-name">Backup de Arquivos (Até 50GB)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 45,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Instalação de Programas', 25)">
+                        <div class="card-header"><span class="service-name">Instalação de Programas</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 25,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-group-container" style="border-left: 3px solid var(--software);">
+                <div class="sub-group-header">
+                    <span class="sub-icon">🚀</span> Performance & Gamer
+                </div>
+                <div class="services-grid">
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Otimização Windows', 70)">
+                        <div class="card-header"><span class="service-name">Otimização Windows (Debloat)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 70,00</div>
+                        <span class="badge bg-sw">MAIS FPS</span>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Renovação Drivers', 45)">
+                        <div class="card-header"><span class="service-name">Renovação Drivers (Update+Limpeza)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 45,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Update BIOS + XMP', 60)">
+                        <div class="card-header"><span class="service-name">Update BIOS + XMP (Básico)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 60,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Overclock & Undervolt', 150)">
+                        <div class="card-header"><span class="service-name">Overclock & Undervolt</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 150,00</div>
+                        <span class="badge bg-sw">EXTREME</span>
+                    </div>
+                    
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'COMBO GAMER TOTAL', 250)">
+                        <div class="card-header"><span class="service-name">COMBO GAMER TOTAL (Tudo Acima)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 250,00</div>
+                        <span class="badge bg-sw">★ MELHOR VALOR</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-group-container" style="border-left: 3px solid var(--software);">
+                <div class="sub-group-header">
+                    <span class="sub-icon">🎙️</span> Studio & Stream
+                </div>
+                <div class="services-grid">
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Config Microfone Pro', 125)">
+                        <div class="card-header"><span class="service-name">Config. Microfone Pro</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 165,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'Calibração Monitor', 60)">
+                        <div class="card-header"><span class="service-name">Calibração Monitor</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 75,00</div>
+                    </div>
+                     <div class="service-card sw-card" onclick="toggleItem(this, 'Config OBS Studio', 50)">
+                        <div class="card-header"><span class="service-name">Config OBS Studio</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 50,00</div>
+                    </div>
+                    <div class="service-card sw-card" onclick="toggleItem(this, 'COMBO STUDIO PRO', 240)">
+                        <div class="card-header"><span class="service-name">COMBO STUDIO PRO</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 240,00</div>
+                        <span class="badge bg-sw">★ PRO</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="main-group-title hw-title">
+                🔧 GRUPO HARDWARE (FÍSICO)
+            </div>
+
+            <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
+                <div class="sub-group-header">
+                    <span class="sub-icon">🧹</span> Cuidados & Manutenção
+                </div>
+                <div class="services-grid">
+                    <div class="service-card hw-card" onclick="toggleItem(this, 'Limpeza Premium (c/ Pasta)', 120)">
+                        <div class="card-header"><span class="service-name">Limpeza Premium (c/ Pasta Térmica)</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 120,00</div>
+                        <span class="badge bg-hw">COMPLETO</span>
+                    </div>
+                    <div class="service-card hw-card" onclick="toggleItem(this, 'Organização de Cabos', 70)">
+                        <div class="card-header"><span class="service-name">Organização de Cabos</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 70,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
+                <div class="sub-group-header">
+                    <span class="sub-icon">🏗️</span> Montagem & Técnica
+                </div>
+                <div class="services-grid">
+                    <div class="service-card hw-card" onclick="toggleItem(this, 'Montagem de PC', 225)">
+                        <div class="card-header"><span class="service-name">Montagem de PC</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 225,00</div>
+                    </div>
+                    <div class="service-card hw-card" onclick="toggleItem(this, 'Diagnóstico Defeito', 50)">
+                        <div class="card-header"><span class="service-name">Diagnóstico Defeito</span><div class="check-circle"></div></div>
+                        <div class="price-tag">R$ 50,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-group-container" style="background: var(--bg-panel);">
+                <h3 style="margin-bottom: 10px; color: white;">📝 Observações</h3>
+                <textarea id="input-feedback" rows="3" placeholder="Ex: Preciso que o PC fique pronto até sexta..."></textarea>
+            </div>
+
+        </div> </div>
+
+    <div class="sticky-footer" id="footer-cart">
+        <div>
+            <div style="font-size:0.8rem; color:#aaa;">TOTAL ESTIMADO</div>
+            <div class="total-val" id="total-display">R$ 0,00</div>
+        </div>
+        <button class="btn-finish" id="btn-finish" onclick="finishOrder()">ENVIAR PEDIDO 📲</button>
+    </div>
+
+    <script>
+        // ===============================================
+        // CONFIGURAÇÕES
+        // ===============================================
+        const MY_WHATSAPP = "5513998059374"; 
+        const SHEET_URL = "https://api.sheetmonkey.io/form/nscyFYxznN7wnU9F4RhVsR";
+
+        let cart = [];
+        let total = 0;
+        let clientData = {};
+
+        function maskPhone(input) {
+            let v = input.value.replace(/\D/g,'');
+            v = v.replace(/^(\d\d)(\d)/g,"($1) $2");
+            v = v.replace(/(\d{5})(\d)/," $1-$2");
+            input.value = v;
+        }
+
+        function goToMenu() {
+            const name = document.getElementById('input-name').value;
+            const phone = document.getElementById('input-phone').value;
+            
+            if(name.length < 3 || phone.length < 13) {
+                alert("Preencha seu Nome e WhatsApp corretamente.");
+                return;
+            }
+            clientData = { name, phone };
+            
+            document.getElementById('step-identity').style.display = 'none';
+            document.getElementById('step-menu').style.display = 'block';
+            document.getElementById('footer-cart').style.display = 'flex';
+            window.scrollTo(0,0);
+        }
+
+        function toggleItem(el, name, price) {
+            if(el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                total -= price;
+                cart = cart.filter(i => i !== name);
+            } else {
+                el.classList.add('selected');
+                total += price;
+                cart.push(name);
+            }
+            document.getElementById('total-display').innerText = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
+        }
+
+        async function finishOrder() {
+            if(cart.length === 0) { alert("Selecione algo!"); return; }
+            
+            const btn = document.getElementById('btn-finish');
+            const feedback = document.getElementById('input-feedback').value;
+            btn.innerHTML = "ENVIANDO..."; btn.disabled = true;
+
+            const now = new Date();
+            const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+            const data = {
+                "Data": dateStr, "ID": orderID, 
+                "Cliente": clientData.name, "Telefone": clientData.phone,
+                "Servicos": cart.join(" | "), 
+                "Total": `R$ ${total.toFixed(2).replace('.', ',')}`,
+                "Observacoes": feedback
+            };
+
+            // MENSAGEM DO ZAP (Definida antes para usar no fallback)
+            let msgZap = `Olá! Fiz o *Pedido ${orderID}* pelo site.\n`;
+            msgZap += `👤 *Cliente:* ${clientData.name}\n`;
+            msgZap += `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n`;
+            msgZap += `Aguardo confirmação!`;
+
+            try {
+                // Tenta salvar no Excel
+                await fetch(SHEET_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                // Sucesso
+                window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`, '_blank');
+                btn.innerHTML = "ENVIADO! ✅";
+
+            } catch (error) {
+                console.error("Erro no Excel:", error);
+                // ERRO NO EXCEL? MANDA PRO ZAP MESMO ASSIM!
+                // Mas mandamos a lista completa pro zap já que o excel falhou
+                let msgFallback = `Olá! O site teve um erro no Excel, então aqui está o pedido completo:\n`;
+                msgFallback += `*Pedido ${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}\n💰 Total: R$ ${total.toFixed(2).replace('.', ',')}`;
+                
+                window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgFallback)}`, '_blank');
+                btn.innerHTML = "ENVIADO (OFFLINE)";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
