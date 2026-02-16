@@ -331,7 +331,7 @@
         <button class="btn-finish" id="btn-finish" onclick="finishOrder()">ENVIAR PEDIDO 📲</button>
     </div>
 
-    <script>
+<script>
         // ===============================================
         // CONFIGURAÇÕES
         // ===============================================
@@ -387,17 +387,22 @@
 
             const now = new Date();
             const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
-            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            
+            // CORREÇÃO AQUI: Adicionei uma aspa simples (') antes da data
+            // Isso força o Excel/Sheets a ler como TEXTO e parar de mostrar números loucos
+            const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
             const data = {
-                "Data": dateStr, "ID": orderID, 
-                "Cliente": clientData.name, "Telefone": clientData.phone,
+                "Data": dateStr, 
+                "ID": orderID, 
+                "Cliente": clientData.name, 
+                "Telefone": clientData.phone,
                 "Servicos": cart.join(" | "), 
                 "Total": `R$ ${total.toFixed(2).replace('.', ',')}`,
                 "Observacoes": feedback
             };
 
-            // MENSAGEM DO ZAP (Definida antes para usar no fallback)
+            // MENSAGEM DO ZAP
             let msgZap = `Olá! Fiz o *Pedido ${orderID}* pelo site.\n`;
             msgZap += `👤 *Cliente:* ${clientData.name}\n`;
             msgZap += `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n`;
@@ -416,8 +421,7 @@
 
             } catch (error) {
                 console.error("Erro no Excel:", error);
-                // ERRO NO EXCEL? MANDA PRO ZAP MESMO ASSIM!
-                // Mas mandamos a lista completa pro zap já que o excel falhou
+                // Fallback caso dê erro no Excel
                 let msgFallback = `Olá! O site teve um erro no Excel, então aqui está o pedido completo:\n`;
                 msgFallback += `*Pedido ${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}\n💰 Total: R$ ${total.toFixed(2).replace('.', ',')}`;
                 
