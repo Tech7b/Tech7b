@@ -142,6 +142,55 @@
         .bg-sw { background: rgba(0, 217, 255, 0.2); color: var(--software); }
         .bg-hw { background: rgba(255, 157, 0, 0.2); color: var(--hardware); }
 
+        /* --- ESTILOS DO MODAL DE DEMO --- */
+        .demo-badge {
+            font-size: 0.7rem; 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            margin-top: 8px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            cursor: pointer; 
+            transition: 0.3s;
+            z-index: 10; position: relative;
+        }
+        .demo-badge:hover { background: white; color: black; border-color: white; }
+
+        /* O Fundo Escuro do Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); 
+            z-index: 3000; /* BEM ALTO PARA FICAR EM CIMA DE TUDO */
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+
+        /* A Caixa do Conteúdo */
+        .modal-content {
+            background: #1a1a1a; width: 90%; max-width: 500px;
+            padding: 25px; border-radius: 15px; border: 1px solid var(--primary);
+            text-align: center; position: relative;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+        }
+
+        .modal-close {
+            position: absolute; top: 10px; right: 15px;
+            color: #fff; font-size: 1.5rem; cursor: pointer;
+        }
+
+        /* Estilos internos do player */
+        .demo-video { width: 100%; border-radius: 8px; margin-top: 10px; }
+        .audio-box { 
+            background: #222; padding: 15px; border-radius: 8px; 
+            margin: 10px 0; border-left: 3px solid var(--software); text-align: left; 
+        }
+        .audio-label { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; display: block; }
+
         /* FOOTER */
         .sticky-footer {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -230,6 +279,7 @@
                         <div class="card-header"><span class="service-name">Otimização Windows (Debloat)</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 70,00</div>
                         <span class="badge bg-sw">MAIS FPS</span>
+                        <div class="demo-badge" onclick="openDemo(event, 'fps')">▷ Ver Ganho de FPS</div>
                     </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Renovação Drivers', 45)">
                         <div class="card-header"><span class="service-name">Renovação Drivers (Update+Limpeza)</span><div class="check-circle"></div></div>
@@ -244,7 +294,6 @@
                         <div class="price-tag">R$ 150,00</div>
                         <span class="badge bg-sw">EXTREME</span>
                     </div>
-                    
                     <div class="service-card sw-card" onclick="toggleItem(this, 'COMBO GAMER TOTAL', 250)">
                         <div class="card-header"><span class="service-name">COMBO GAMER TOTAL (Tudo Acima)</span><div class="check-circle"></div></div>
                         <div class="price-tag">R$ 250,00</div>
@@ -260,11 +309,13 @@
                 <div class="services-grid">
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Config Microfone Pro', 125)">
                         <div class="card-header"><span class="service-name">Config. Microfone Pro</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 165,00</div>
+                        <div class="price-tag">R$ 125,00</div>
+                        <div class="demo-badge" onclick="openDemo(event, 'mic')">🔊 Ouvir Antes/Depois</div>
                     </div>
                     <div class="service-card sw-card" onclick="toggleItem(this, 'Calibração Monitor', 60)">
                         <div class="card-header"><span class="service-name">Calibração Monitor</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 75,00</div>
+                        <div class="price-tag">R$ 60,00</div>
+                        <div class="demo-badge" onclick="openDemo(event, 'color')">👁️ Ver Cores Reais</div>
                     </div>
                      <div class="service-card sw-card" onclick="toggleItem(this, 'Config OBS Studio', 50)">
                         <div class="card-header"><span class="service-name">Config OBS Studio</span><div class="check-circle"></div></div>
@@ -323,6 +374,15 @@
 
         </div> </div>
 
+    <div id="demo-modal" class="modal-overlay" onclick="closeDemo(event)">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeDemoExplicit()">×</span>
+            <h3 id="modal-title" style="margin-bottom: 15px; color: var(--primary);">Demonstração</h3>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
     <div class="sticky-footer" id="footer-cart">
         <div>
             <div style="font-size:0.8rem; color:#aaa;">TOTAL ESTIMADO</div>
@@ -331,7 +391,7 @@
         <button class="btn-finish" id="btn-finish" onclick="finishOrder()">ENVIAR PEDIDO 📲</button>
     </div>
 
-<script>
+    <script>
         // ===============================================
         // CONFIGURAÇÕES
         // ===============================================
@@ -388,8 +448,7 @@
             const now = new Date();
             const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
             
-            // CORREÇÃO AQUI: Adicionei uma aspa simples (') antes da data
-            // Isso força o Excel/Sheets a ler como TEXTO e parar de mostrar números loucos
+            // CORREÇÃO DATA: Adicionado aspas simples
             const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
             const data = {
@@ -402,34 +461,88 @@
                 "Observacoes": feedback
             };
 
-            // MENSAGEM DO ZAP
             let msgZap = `Olá! Fiz o *Pedido ${orderID}* pelo site.\n`;
             msgZap += `👤 *Cliente:* ${clientData.name}\n`;
             msgZap += `💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n`;
             msgZap += `Aguardo confirmação!`;
 
             try {
-                // Tenta salvar no Excel
                 await fetch(SHEET_URL, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(data)
                 });
-                // Sucesso
                 window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`, '_blank');
                 btn.innerHTML = "ENVIADO! ✅";
 
             } catch (error) {
                 console.error("Erro no Excel:", error);
-                // Fallback caso dê erro no Excel
                 let msgFallback = `Olá! O site teve um erro no Excel, então aqui está o pedido completo:\n`;
                 msgFallback += `*Pedido ${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}\n💰 Total: R$ ${total.toFixed(2).replace('.', ',')}`;
-                
                 window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgFallback)}`, '_blank');
                 btn.innerHTML = "ENVIADO (OFFLINE)";
             } finally {
                 btn.disabled = false;
             }
+        }
+
+        // --- SISTEMA DE DEMONSTRAÇÃO ---
+        function openDemo(event, type) {
+            event.stopPropagation();
+            const modal = document.getElementById('demo-modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            modal.style.display = 'flex'; 
+
+            if (type === 'mic') {
+                title.innerText = "🎙️ Teste de Microfone";
+                body.innerHTML = `
+                    <div class="audio-box">
+                        <span class="audio-label">❌ ANTES (Chiado/Ruído):</span>
+                        <audio controls style="width: 100%" src="mic_antes.mp3"></audio>
+                    </div>
+                    <div class="audio-box" style="border-color: var(--primary)">
+                        <span class="audio-label">✅ DEPOIS (Voz de Estúdio):</span>
+                        <audio controls style="width: 100%" src="mic_depois.mp3"></audio>
+                    </div>
+                    <p style="font-size:0.8rem; color:#888; margin-top:10px">Otimização via software.</p>
+                `;
+            } 
+            else if (type === 'fps') {
+                title.innerText = "🚀 Ganho de Performance";
+                body.innerHTML = `
+                    <video class="demo-video" controls autoplay loop muted>
+                        <source src="fps_demo.mp4" type="video/mp4">
+                        Seu navegador não suporta vídeo.
+                    </video>
+                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:bold">
+                        <span style="color:#f55">Antes: ~45 FPS</span>
+                        <span style="color:var(--primary)">Depois: ~120 FPS</span>
+                    </div>
+                `;
+            }
+            else if (type === 'color') {
+                title.innerText = "🎨 Calibração de Cores";
+                body.innerHTML = `
+                    <video class="demo-video" controls autoplay loop muted>
+                        <source src="cores_demo.mp4" type="video/mp4">
+                    </video>
+                    <p style="margin-top:10px">Esquerda: Padrão | Direita: Calibrado</p>
+                `;
+            }
+        }
+
+        function closeDemo(event) {
+            if (event.target.id === 'demo-modal') {
+                document.getElementById('demo-modal').style.display = 'none';
+                document.getElementById('modal-body').innerHTML = '';
+            }
+        }
+
+        function closeDemoExplicit() {
+            document.getElementById('demo-modal').style.display = 'none';
+            document.getElementById('modal-body').innerHTML = '';
         }
     </script>
 </body>
