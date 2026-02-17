@@ -504,7 +504,7 @@
                         <div class="price-container"><div class="price-tag">R$ 70,00</div></div>
                         <div class="card-actions">
                             <div class="demo-badge" onclick="openDemo(event, 'color')">👁️ Ver Cores Reais</div>
-                            <div class="warning-badge" onclick="openWarning(event)">⚠️ Ler Aviso</div>
+                            <div class="demo-badge" onclick="openWarning(event)">⚠️ Ler Aviso</div>
                         </div>
                         <div class="real-count-badge" id="badge-Calibração Monitor"></div>
                     </div>
@@ -1096,7 +1096,7 @@
             title.style.color = "var(--primary)"; modal.style.display = 'flex';
             if (type === 'mic') { title.innerText = "🎙️ Mic Test"; body.innerHTML = `<div class="audio-box"><span>❌ ANTES:</span><audio controls style="width:100%" src="mic_antes.mp3"></audio></div><div class="audio-box" style="border-color:var(--primary)"><span>✅ DEPOIS:</span><audio controls style="width:100%" src="mic_depois.mp3"></audio></div>`; } 
             else if (type === 'fps') { title.innerText = "🚀 FPS Boost"; body.innerHTML = `<video class="demo-video" controls autoplay loop muted><source src="fps_demo.mp4" type="video/mp4"></video><div style="display:flex;justify-content:space-between;margin-top:10px"><span>Antes: ~45</span><span style="color:var(--primary)">Depois: ~120</span></div>`; }
-            else if (type === 'color') { title.innerText = "🎨 Cores"; body.innerHTML = `<img class="demo-video" src="cores_demo.jpg" alt="Comparação de cores"><p style="margin-top:10px">Esq: Padrão | Dir: Calibrado</p>`; }
+            else if (type === 'color') { title.innerText = "🎨 Cores"; body.innerHTML = `<img class="demo-video" src="cores_demo.jpg" alt="Comparação de cores"><p style="margin-top:10px"></p>`; }
         }
         function openWarning(event) {
             triggerHaptic();
