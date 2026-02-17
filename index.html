@@ -884,6 +884,11 @@
                     <!-- Preenchido via JS -->
                 </div>
 
+                <div class="input-group">
+                    <label style="margin-top:20px">Alguma Observação Extra?</label>
+                    <textarea id="input-feedback" rows="2" placeholder="Ex: Preciso urgente, prefiro contato à tarde..." oninput="saveState()"></textarea>
+                </div>
+
                 <div class="review-summary">
                     <div class="summary-label">Valor Total Estimado</div>
                     <div class="summary-total" id="review-total-display">R$ 0,00</div>
@@ -892,6 +897,12 @@
 
                 <div class="review-actions">
                     <button class="btn-primary" id="btn-finish" onclick="finishOrder()">CONFIRMAR E ENVIAR 📲</button>
+                    <!-- Link manual de fallback caso o JS falhe no redirect -->
+                    <a id="manual-whatsapp-link" href="#" target="_blank" style="display:none; text-decoration:none;">
+                         <button class="btn-secondary" style="background:#25D366; border:none; color:white;">
+                            WhatsApp não abriu? Clique aqui
+                         </button>
+                    </a>
                     <button class="btn-secondary" onclick="backToSchedule()">↩ Alterar Agendamento</button>
                 </div>
             </div>
@@ -1441,46 +1452,48 @@
             const diagnosisDetails = document.getElementById('diagnosis-details').value;
 
             const btn = document.getElementById('btn-finish'); 
-            btn.innerHTML = "PROCESSANDO..."; 
+            btn.innerHTML = "ENVIANDO..."; 
             btn.disabled = true;
             
+            // --- CONSTRUÇÃO DOS DADOS ---
             const now = new Date(); const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
             const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
-            // Construção da string de agendamento
             const daysStr = selectedDays.length > 0 ? selectedDays.join(', ') : "A combinar";
             const scheduleFinal = `Dias: ${daysStr} | Obs: ${schedDetails}`;
 
             let fullObs = feedback;
             if(cart.includes('Consultoria de Peças') && (dreamUsage || dreamDetails)) fullObs += ` | [PC SONHOS]: ${dreamBudget} - ${dreamUsage} - ${dreamDetails}`;
             if(cart.includes('Diagnóstico Defeito') && (diagnosisList.length > 0 || diagnosisDetails)) fullObs += ` | [DIAGNÓSTICO]: ${diagnosisList.join(', ')} - ${diagnosisDetails}`;
-            // Adiciona agendamento na planilha também em obs ou campo separado se tiver
             fullObs += ` | [AGENDA]: ${scheduleFinal}`;
 
             const data = { 
-                "Data": dateStr, 
-                "ID": orderID, 
-                "Cliente": clientData.name, 
-                "Telefone": clientData.phone, 
-                "Servicos": cart.join(" | "), 
-                "Total": `R$ ${total.toFixed(2).replace('.', ',')}`, 
-                "Observacoes": fullObs 
+                "Data": dateStr, "ID": orderID, "Cliente": clientData.name, 
+                "Telefone": clientData.phone, "Servicos": cart.join(" | "), 
+                "Total": `R$ ${total.toFixed(2).replace('.', ',')}`, "Observacoes": fullObs 
             };
 
+            // --- CONSTRUÇÃO DO LINK DO WHATSAPP ---
             let msgZap = `Olá! Fiz o *Pedido ${orderID}*.\n👤 *${clientData.name}*\n💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n🛒 *Serviços:* \n${cart.join('\n')}\n`;
             if(cart.includes('Consultoria de Peças')) msgZap += `\n💭 *PC SONHOS:* ${dreamUsage} (${dreamBudget})\n`;
             if(cart.includes('Diagnóstico Defeito')) msgZap += `\n🚨 *SINTOMAS:* ${diagnosisList.join(', ')}\n`;
             
-            // Adiciona Agenda no Zap
             msgZap += `\n📅 *Disponibilidade:* ${daysStr}`;
             if(schedDetails) msgZap += `\n🕒 *Obs Horário:* ${schedDetails}`;
+            if(feedback) msgZap += `\n📝 *Obs:* ${feedback}`;
 
             if(totalSavings > 0) msgZap += `\n\n🤑 *Economizei:* R$ ${totalSavings.toFixed(2).replace('.', ',')}\n`;
             msgZap += `\nAguardo retorno!`;
 
             const linkZap = `https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`;
+            
+            // Link de backup (caso o automático falhe)
+            document.getElementById('manual-whatsapp-link').href = linkZap;
+            document.getElementById('manual-whatsapp-link').style.display = 'block';
 
+            // --- ENVIO PARA PLANILHA E REDIRECIONAMENTO ---
             try {
+                // Tenta enviar para a planilha
                 await fetch(SHEET_URL, { 
                     method: 'POST', 
                     headers: {'Content-Type': 'application/json'}, 
@@ -1488,14 +1501,22 @@
                 });
             } catch (e) {
                 console.error("Erro planilha (background):", e);
-            }
-
-            setTimeout(() => {
+                // Mesmo com erro na planilha, segue para o WhatsApp
+            } finally {
+                // Remove estado local
                 localStorage.removeItem('tech7b_state');
-                window.open(linkZap, '_blank');
+                
+                // Feedback visual
                 btn.innerHTML = "ENVIADO! ✅";
-                setTimeout(() => window.location.reload(), 3000);
-            }, 500);
+                
+                // REDIRECIONAMENTO SEGURO
+                // Usamos location.href em vez de window.open para evitar bloqueadores de popup
+                // e garantir que funcione bem em celulares (deep link)
+                window.location.href = linkZap;
+
+                // Recarrega a página após um tempo maior para dar tempo do redirect acontecer
+                setTimeout(() => window.location.reload(), 4000);
+            }
         }
 
         function openDemo(event, type) {
