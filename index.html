@@ -83,23 +83,20 @@
             opacity: 0; transition: opacity 1s; animation: fadeIn 2s forwards;
         }
 
-        /* --- PROGRESS BAR (ATUALIZADO PARA 3 PASSOS) --- */
+        /* --- PROGRESS BAR (AGORA 4 PASSOS) --- */
         .progress-container {
             display: flex; justify-content: space-between; align-items: center; 
-            margin: 30px auto 10px; max-width: 428px; position: relative; padding: 0 10px;
+            margin: 30px auto 10px; max-width: 500px; /* Aumentei um pouco */
+            position: relative; padding: 0 10px;
         }
-        /* Linha de fundo cinza - Agora age como container da linha colorida */
         .progress-track {
             position: absolute; top: 15px; left: 34px; right: 34px; height: 3px; background: #222; z-index: 1;
-            /* Isso garante que o fill fique preso aqui dentro */
             overflow: hidden; 
             border-radius: 4px;
         }
-        /* Linha colorida de progresso - Agora relativa ao track */
         .progress-fill {
             height: 100%; background: var(--primary); width: 0%; transition: width 0.5s ease;
             box-shadow: 0 0 10px var(--primary);
-            /* Removemos position: absolute pois agora ela mora dentro do track */
         }
 
         .step {
@@ -110,7 +107,7 @@
             color: #888; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.9rem;
             transition: 0.4s;
         }
-        .step-label { font-size: 0.75rem; color: #666; margin-top: 8px; font-weight: 600; transition: 0.4s; text-transform: uppercase; }
+        .step-label { font-size: 0.7rem; color: #666; margin-top: 8px; font-weight: 600; transition: 0.4s; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .step.active .step-circle { border-color: var(--primary); background: #050505; color: var(--primary); box-shadow: 0 0 15px var(--primary-dim); }
         .step.active .step-label { color: var(--text-main); }
@@ -130,15 +127,65 @@
         input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px var(--primary-dim); background: rgba(0,0,0,0.5); }
 
         /* --- TELAS (STEPS) --- */
-        #step-identity, #step-menu, #step-review {
+        #step-identity, #step-menu, #step-schedule, #step-review {
             animation: fadeInUp 0.5s ease;
         }
 
+        /* NOVO LAYOUT DE IDENTIDADE (2 COLUNAS) */
         #step-identity {
-            max-width: 480px; margin: 40px auto; background: var(--bg-panel);
-            padding: 40px; border-radius: 20px; border: 1px solid var(--border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); backdrop-filter: var(--backdrop);
+            max-width: 900px; /* Mais largo para caber as 2 colunas */
+            margin: 40px auto;
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
         }
+        
+        @media (max-width: 768px) {
+            #step-identity { flex-direction: column; max-width: 480px; }
+        }
+
+        .identity-col {
+            flex: 1;
+            padding: 40px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border);
+            backdrop-filter: var(--backdrop);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Coluna da Esquerda (Avisos) */
+        .info-side {
+            background: linear-gradient(145deg, rgba(0, 255, 157, 0.05) 0%, rgba(20,20,20,0.8) 100%);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        
+        .info-title {
+            color: var(--primary); font-size: 1.5rem; font-weight: 900; 
+            margin-bottom: 20px; text-transform: uppercase; letter-spacing: -0.5px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .info-item { display: flex; gap: 15px; align-items: flex-start; }
+        .info-icon { 
+            font-size: 1.5rem; background: rgba(0,255,157,0.1); 
+            width: 40px; height: 40px; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; flex-shrink: 0;
+            border: 1px solid rgba(0,255,157,0.2);
+        }
+        .info-text h4 { color: white; font-weight: 700; margin-bottom: 4px; font-size: 1rem; }
+        .info-text p { color: #aaa; font-size: 0.85rem; line-height: 1.4; }
+
+
+        /* Coluna da Direita (Login) */
+        .login-side {
+            background: var(--bg-panel);
+        }
+
         .privacy-note { font-size: 0.75rem; color: #555; text-align: center; margin-top: 15px; line-height: 1.4; }
 
         /* --- MENU --- */
@@ -219,6 +266,84 @@
 
         .real-count-badge { font-size: 0.7rem; color: #666; margin-top: 10px; display: flex; align-items: center; gap: 4px; font-weight: 500; }
         .real-count-badge span { color: var(--primary); font-weight: 700; }
+        
+        /* --- ESTILOS DO SLIDER DE BACKUP --- */
+        .backup-controls {
+            margin-top: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            padding: 0;
+            border: none;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--primary-dim);
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        /* Input numérico pequeno */
+        .manual-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            min-width: 75px;
+        }
+        
+        .manual-input-wrapper input {
+            width: 40px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            text-align: right;
+            font-weight: 700;
+            color: white;
+            height: auto;
+        }
+        /* Remover setas do input number */
+        .manual-input-wrapper input::-webkit-outer-spin-button,
+        .manual-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .manual-input-wrapper span {
+            font-size: 0.7rem;
+            color: #aaa;
+            font-weight: 600;
+        }
 
         /* --- TOAST --- */
         #toast-notification {
@@ -247,7 +372,38 @@
         }
         .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
 
-        /* --- TELA REVISÃO (NOVO) --- */
+        /* --- TELA AGENDA (NOVO) --- */
+        #step-schedule { display: none; max-width: 600px; margin: 0 auto; }
+        
+        .schedule-card {
+            background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 20px; padding: 30px; backdrop-filter: var(--backdrop);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .schedule-title { text-align: center; margin-bottom: 25px; }
+        .schedule-title h2 { font-size: 1.5rem; color: white; margin-bottom: 5px; text-transform: uppercase; }
+        .schedule-title p { color: #888; font-size: 0.9rem; }
+
+        /* Grade de Dias */
+        .days-grid { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; 
+            margin-bottom: 20px; 
+        }
+        @media(max-width: 400px) { .days-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .day-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 12px 5px; text-align: center; cursor: pointer;
+            transition: 0.3s; color: #aaa; font-weight: 600; font-size: 0.85rem; user-select: none;
+        }
+        .day-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        
+        .day-btn.selected {
+            background: var(--primary); color: #000; border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-dim); font-weight: 800; transform: translateY(-2px);
+        }
+
+        /* --- TELA REVISÃO --- */
         #step-review { display: none; max-width: 600px; margin: 0 auto; }
         
         .review-card {
@@ -270,6 +426,13 @@
         .review-item-name { font-size: 0.95rem; color: #ddd; font-weight: 500; }
         .review-item-price { font-size: 0.95rem; color: #fff; font-weight: 700; }
         
+        .review-schedule-info {
+            background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.15);
+            padding: 15px; border-radius: 10px; margin-bottom: 20px; color: #ccc; font-size: 0.9rem;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .review-schedule-info span { color: var(--primary); font-weight: bold; }
+
         .review-summary { 
             background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-bottom: 30px; 
             border: 1px solid rgba(255,255,255,0.05); text-align: center;
@@ -367,9 +530,8 @@
         <strong>💡 Dica:</strong> <span id="toast-msg"></span>
     </div>
 
-    <!-- PROGRESS BAR (3 PASSOS) -->
+    <!-- PROGRESS BAR (4 PASSOS) -->
     <div class="progress-container">
-        <!-- MUDANÇA AQUI: O fill agora mora DENTRO do track -->
         <div class="progress-track">
             <div class="progress-fill" id="progress-fill"></div>
         </div>
@@ -382,31 +544,78 @@
             <div class="step-circle">2</div>
             <div class="step-label">Config</div>
         </div>
+        <!-- NOVO PASSO -->
         <div class="step" id="step-3-indicator">
             <div class="step-circle">3</div>
+            <div class="step-label">Agenda</div>
+        </div>
+        <div class="step" id="step-4-indicator">
+            <div class="step-circle">4</div>
             <div class="step-label">Revisão</div>
         </div>
     </div>
 
     <div class="container">
-        <!-- STEP 1: IDENTIDADE -->
+        <!-- STEP 1: IDENTIDADE (AGORA DIVIDIDO) -->
         <div id="step-identity">
-            <h2 style="margin-bottom: 10px; color: white; text-align: center;">Área do Cliente</h2>
-            <p style="text-align:center; color:#888; margin-bottom:30px; font-size:0.9rem;">Identifique-se para iniciar seu atendimento personalizado.</p>
             
-            <div class="input-group">
-                <label>Nome Completo</label>
-                <input type="text" id="input-name" placeholder="Como podemos te chamar?" oninput="saveState()">
+            <!-- COLUNA DA ESQUERDA: AVISOS E SEGURANÇA -->
+            <div class="identity-col info-side">
+                <div class="info-title">
+                    <span>🛡️</span> COMO FUNCIONA
+                </div>
+                <ul class="info-list">
+                    <li class="info-item">
+                        <div class="info-icon">💳</div>
+                        <div class="info-text">
+                            <h4>Sem Dados Bancários</h4>
+                            <p>Não precisa informar cartão ou CPF agora. É seguro e sem compromisso.</p>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-icon">📅</div>
+                        <div class="info-text">
+                            <h4>Apenas Agendamento</h4>
+                            <p>Esta ferramenta serve para montarmos o orçamento e agendarmos o serviço.</p>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-icon">✅</div>
+                        <div class="info-text">
+                            <h4>Pagamento na Entrega</h4>
+                            <p>Você só paga quando o serviço estiver pronto e o PC em suas mãos.</p>
+                        </div>
+                    </li>
+                    <li class="info-item">
+                        <div class="info-icon">🤝</div>
+                        <div class="info-text">
+                            <h4>Risco Zero</h4>
+                            <p>Se não resolvermos o problema, você não paga absolutamente nada.</p>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="input-group">
-                <label>WhatsApp</label>
-                <input type="tel" id="input-phone" placeholder="(XX) XXXXX-XXXX" maxlength="16" oninput="maskPhone(this); saveState()">
+
+            <!-- COLUNA DA DIREITA: LOGIN -->
+            <div class="identity-col login-side">
+                <h2 style="margin-bottom: 10px; color: white; text-align: center;">Área do Cliente</h2>
+                <p style="text-align:center; color:#888; margin-bottom:30px; font-size:0.9rem;">Identifique-se para iniciar seu atendimento personalizado.</p>
+                
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="input-name" placeholder="Como podemos te chamar?" oninput="saveState()">
+                </div>
+                <div class="input-group">
+                    <label>WhatsApp</label>
+                    <input type="tel" id="input-phone" placeholder="(XX) XXXXX-XXXX" maxlength="16" oninput="maskPhone(this); saveState()">
+                </div>
+                <button class="btn-primary" onclick="goToMenu()">INICIAR CONFIGURAÇÃO ➔</button>
+                <p class="privacy-note">
+                    <span style="opacity:0.7">🔒 Seus dados são usados apenas para o contato sobre o orçamento.</span><br>
+                    Ao continuar, você concorda com o envio via WhatsApp.
+                </p>
             </div>
-            <button class="btn-primary" onclick="goToMenu()">INICIAR CONFIGURAÇÃO ➔</button>
-            <p class="privacy-note">
-                <span style="opacity:0.7">🔒 Seus dados são usados apenas para o contato sobre o orçamento.</span><br>
-                Ao continuar, você concorda com o envio via WhatsApp.
-            </p>
+            
         </div>
 
         <!-- STEP 2: MENU -->
@@ -420,22 +629,43 @@
                     <div class="group-counter" id="count-group-manutencao"></div>
                 </div>
                 <div class="services-grid">
-                    <div class="service-card sw-card" data-name="Formatação Limpa" data-price="120.00" onclick="toggleItem(this)">
+                    <div class="service-card sw-card" data-name="Formatação Limpa" data-price="100.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Formatação Limpa</span><div class="check-circle"></div></div>
-                        <div class="price-container"><div class="price-tag">R$ 120,00</div></div>
+                        <div class="price-container"><div class="price-tag">R$ 100,00</div></div>
                         <div class="real-count-badge" id="badge-Formatação Limpa"></div>
                     </div>
-                    <div class="service-card sw-card" data-name="Ativação Windows" data-price="50.00" onclick="toggleItem(this)">
+                    <div class="service-card sw-card" data-name="Ativação Windows" data-price="23.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Ativação Windows (Chave Digital)</span><div class="check-circle"></div></div>
-                        <div class="price-container"><div class="price-tag">R$ 50,00</div></div>
+                        <div class="price-container"><div class="price-tag">R$ 23,00</div></div>
                         <span class="badge bg-sw">ORIGINAL</span>
                         <div class="real-count-badge" id="badge-Ativação Windows"></div>
                     </div>
-                    <div class="service-card sw-card" data-name="Backup" data-price="45.00" onclick="toggleItem(this)">
-                        <div class="card-header"><span class="service-name">Backup (Arquivos Essenciais - Até 5GB)</span><div class="check-circle"></div></div>
-                        <div class="price-container"><div class="price-tag">R$ 45,00</div></div>
+                    
+                    <!-- NOVO CARD BACKUP DINÂMICO -->
+                    <div class="service-card sw-card" id="card-backup" data-name="Backup" data-price="25.00" onclick="toggleItem(this)">
+                        <div class="card-header">
+                            <span class="service-name">Backup (Pague pelo tamanho)</span>
+                            <div class="check-circle"></div>
+                        </div>
+                        
+                        <!-- Controles do Slider -->
+                        <div class="backup-controls" onclick="event.stopPropagation()">
+                            <div class="slider-row">
+                                <input type="range" id="backup-slider" min="0" max="100" step="1" value="50" oninput="updateBackupFromSlider(this.value)">
+                                <div class="manual-input-wrapper">
+                                    <input type="number" id="backup-manual" value="5.0" step="0.1" min="0" max="10" oninput="updateBackupFromInput(this.value)">
+                                    <span>GB</span>
+                                </div>
+                            </div>
+                            <div class="price-container" style="justify-content: flex-end; font-size: 0.9rem;">
+                                <span style="color:#aaa; margin-right:5px">Valor:</span>
+                                <div class="price-tag" id="backup-price-display" style="font-size:1.1rem">R$ 25,00</div>
+                            </div>
+                        </div>
+
                         <div class="real-count-badge" id="badge-Backup"></div>
                     </div>
+
                     <div class="service-card sw-card" data-name="Instalação de Programas" data-price="25.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Instalação de Programas</span><div class="check-circle"></div></div>
                         <div class="price-container"><div class="price-tag">R$ 25,00</div></div>
@@ -597,19 +827,47 @@
                 </div>
                 <div class="input-group"><textarea id="dream-details" rows="2" placeholder="Detalhes..." oninput="saveState()"></textarea></div>
             </div>
-
-            <div class="sub-group-container" style="background: var(--bg-panel); margin-top: 20px;">
-                <h3 style="margin-bottom: 10px; color: white;">Outras Observações</h3>
-                <textarea id="input-feedback" rows="2" placeholder="Algum detalhe extra?" oninput="saveState()"></textarea>
-            </div>
-
             <div class="floating-forward-area">
-                <button class="btn-primary" onclick="goToReview()">REVISAR PEDIDO ➔</button>
+                <!-- Mudança de ação: Agora vai para agendamento -->
+                <button class="btn-primary" onclick="goToSchedule()">SEGUIR PARA AGENDAMENTO ➔</button>
             </div>
 
         </div> 
+        
+        <!-- STEP 3: AGENDAMENTO (NOVO) -->
+        <div id="step-schedule">
+            <div class="schedule-card">
+                <div class="schedule-title">
+                    <h2>📅 Disponibilidade</h2>
+                    <p>Selecione os dias e horários preferenciais para o serviço.</p>
+                </div>
 
-        <!-- STEP 3: REVISÃO (NOVO) -->
+                <div class="input-group">
+                    <label>Dias da Semana (Pode marcar vários)</label>
+                    <div class="days-grid">
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Seg">Segunda</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Ter">Terça</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Qua">Quarta</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Qui">Quinta</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Sex">Sexta</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Sáb">Sábado</div>
+                        <div class="day-btn" onclick="toggleDay(this)" data-day="Dom">Domingo</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Horário / Detalhes</label>
+                    <textarea id="schedule-details" rows="3" placeholder="Ex: Sexta após as 14h, ou Sábado de manhã..." oninput="saveState()"></textarea>
+                </div>
+
+                <div class="review-actions">
+                    <button class="btn-primary" onclick="goToReview()">REVISAR PEDIDO ➔</button>
+                    <button class="btn-secondary" onclick="backToMenu()">↩ Voltar para Serviços</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: REVISÃO (ATUALIZADO) -->
         <div id="step-review">
             <div class="review-card">
                 <div class="review-header">
@@ -621,6 +879,11 @@
                     <!-- Lista gerada via JS -->
                 </div>
 
+                <!-- Resumo da Agenda na Revisão -->
+                <div class="review-schedule-info" id="review-schedule-display">
+                    <!-- Preenchido via JS -->
+                </div>
+
                 <div class="review-summary">
                     <div class="summary-label">Valor Total Estimado</div>
                     <div class="summary-total" id="review-total-display">R$ 0,00</div>
@@ -629,7 +892,7 @@
 
                 <div class="review-actions">
                     <button class="btn-primary" id="btn-finish" onclick="finishOrder()">CONFIRMAR E ENVIAR 📲</button>
-                    <button class="btn-secondary" onclick="backToMenu()">↩ Voltar e Editar</button>
+                    <button class="btn-secondary" onclick="backToSchedule()">↩ Alterar Agendamento</button>
                 </div>
             </div>
         </div>
@@ -645,9 +908,13 @@
         const SHEET_URL = "https://api.sheetmonkey.io/form/nscyFYxznN7wnU9F4RhVsR";
         const LINK_CSV_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvhBhY1TvExozH9_VMp6SLDYgCav9a8TDRoNS17jaUJp8fvp8E3XQQ1spBXGgd2-S0X5IueT8c7GUG/pub?gid=950131635&single=true&output=csv"; 
         
+        // CONFIGURAÇÃO DO BACKUP
+        const BACKUP_PRICE_PER_GB = 5.00; 
+
         let cart = []; 
         let cartObjects = []; // Guarda infos completas {name, price, type}
         let total = 0; let clientData = {}; let totalSavings = 0;
+        let selectedDays = []; // Array para guardar dias selecionados
 
         const recommendations = {
             'Otimização Windows': 'Renovação Drivers',
@@ -775,18 +1042,87 @@
             });
         }
 
+        /* --- LÓGICA DO SLIDER DE BACKUP --- */
+        function updateBackupFromSlider(val) {
+            // Slider vai de 0 a 100 (representando 0.0 a 10.0)
+            const gb = val / 10;
+            document.getElementById('backup-manual').value = gb;
+            calculateBackupPrice(gb);
+        }
+
+        function updateBackupFromInput(val) {
+            let gb = parseFloat(val);
+            if(isNaN(gb)) gb = 0;
+            if(gb > 10) gb = 10;
+            // Sincroniza slider (0-100)
+            document.getElementById('backup-slider').value = gb * 10;
+            calculateBackupPrice(gb);
+        }
+
+        function calculateBackupPrice(gb) {
+            const newPrice = gb * BACKUP_PRICE_PER_GB;
+            const display = document.getElementById('backup-price-display');
+            const card = document.getElementById('card-backup');
+            
+            // Atualiza display visual
+            display.innerText = `R$ ${newPrice.toFixed(2).replace('.', ',')}`;
+            
+            // Verifica se houve mudança de preço enquanto selecionado
+            const oldPrice = parseFloat(card.getAttribute('data-price'));
+            card.setAttribute('data-price', newPrice.toFixed(2));
+            card.setAttribute('data-name', `Backup (${gb}GB)`);
+
+            // Se o card já estiver selecionado no carrinho, precisamos atualizar o total global
+            if (card.classList.contains('selected')) {
+                // Remove o preço antigo do total e adiciona o novo
+                total = total - oldPrice + newPrice;
+                
+                // Atualiza o objeto no carrinho
+                const cartIndex = cartObjects.findIndex(c => c.name.includes("Backup"));
+                if (cartIndex !== -1) {
+                    cartObjects[cartIndex].price = newPrice;
+                    cartObjects[cartIndex].name = `Backup (${gb}GB)`;
+                    cart[cartIndex] = `Backup (${gb}GB)`;
+                }
+                
+                // Salva estado novo
+                saveState();
+            }
+        }
+
+        function toggleDay(el) {
+            const day = el.getAttribute('data-day');
+            if(selectedDays.includes(day)) {
+                selectedDays = selectedDays.filter(d => d !== day);
+                el.classList.remove('selected');
+            } else {
+                selectedDays.push(day);
+                el.classList.add('selected');
+            }
+            triggerHaptic();
+            saveState();
+        }
+
+        // --- CORREÇÃO DE SEGURANÇA NO SAVESTATE ---
+        function getSafeValue(id) {
+            const el = document.getElementById(id);
+            return el ? el.value : "";
+        }
+
         function saveState() {
             const state = {
                 cart: cart,
                 total: total,
+                selectedDays: selectedDays,
                 inputs: {
-                    name: document.getElementById('input-name').value,
-                    phone: document.getElementById('input-phone').value,
-                    dreamBudget: document.getElementById('dream-budget').value,
-                    dreamUsage: document.getElementById('dream-usage').value,
-                    dreamDetails: document.getElementById('dream-details').value,
-                    diagDetails: document.getElementById('diagnosis-details').value,
-                    feedback: document.getElementById('input-feedback').value
+                    name: getSafeValue('input-name'),
+                    phone: getSafeValue('input-phone'),
+                    dreamBudget: getSafeValue('dream-budget'),
+                    dreamUsage: getSafeValue('dream-usage'),
+                    dreamDetails: getSafeValue('dream-details'),
+                    diagDetails: getSafeValue('diagnosis-details'),
+                    feedback: getSafeValue('input-feedback'),
+                    scheduleDetails: getSafeValue('schedule-details')
                 },
                 checkboxes: Array.from(document.querySelectorAll('input[name="sintoma"]:checked')).map(cb => cb.value)
             };
@@ -808,12 +1144,21 @@
                     if(document.getElementById('dream-details')) document.getElementById('dream-details').value = state.inputs.dreamDetails || "";
                     if(document.getElementById('diagnosis-details')) document.getElementById('diagnosis-details').value = state.inputs.diagDetails || "";
                     if(document.getElementById('input-feedback')) document.getElementById('input-feedback').value = state.inputs.feedback || "";
+                    if(document.getElementById('schedule-details')) document.getElementById('schedule-details').value = state.inputs.scheduleDetails || "";
                 }
 
                 if(state.checkboxes) {
                     state.checkboxes.forEach(val => {
                         const cb = document.querySelector(`input[name="sintoma"][value="${val}"]`);
                         if(cb) cb.checked = true;
+                    });
+                }
+                
+                if(state.selectedDays) {
+                    selectedDays = state.selectedDays;
+                    selectedDays.forEach(day => {
+                        const el = document.querySelector(`.day-btn[data-day="${day}"]`);
+                        if(el) el.classList.add('selected');
                     });
                 }
 
@@ -830,8 +1175,22 @@
                     const cards = document.querySelectorAll('.service-card');
                     cards.forEach(card => {
                         const cardName = card.getAttribute('data-name'); 
-                        if (state.cart.some(s => s.includes(cardName) || cardName === s)) {
-                            card.click(); // Recalcula totais e savings
+                        // Verifica se é backup (nome dinâmico) ou outro item
+                        const isBackupInCart = state.cart.some(s => s.includes("Backup") && cardName.includes("Backup"));
+                        
+                        if (isBackupInCart) {
+                             // Tenta extrair GB do nome salvo ex: "Backup (5.5GB)"
+                             const savedItem = state.cart.find(s => s.includes("Backup"));
+                             const match = savedItem.match(/Backup \(([\d.]+)GB\)/);
+                             if(match) {
+                                 const gb = match[1];
+                                 document.getElementById('backup-manual').value = gb;
+                                 updateBackupFromInput(gb); // Recalcula preço antes de clicar
+                             }
+                             card.click();
+                        }
+                        else if (state.cart.some(s => s === cardName)) {
+                            card.click(); 
                         }
                     });
                 }
@@ -850,16 +1209,16 @@
         function updateProgressStep(step) {
             const s1 = document.getElementById('step-1-indicator');
             const s2 = document.getElementById('step-2-indicator');
-            const s3 = document.getElementById('step-3-indicator');
+            const s3 = document.getElementById('step-3-indicator'); // Agenda
+            const s4 = document.getElementById('step-4-indicator'); // Revisão
             const fill = document.getElementById('progress-fill');
             
             // Lista de todos os passos para contagem automática
-            const allSteps = [s1, s2, s3];
+            const allSteps = [s1, s2, s3, s4];
             const totalSteps = allSteps.length;
 
             // FÓRMULA UNIVERSAL DE PROGRESSO
-            // Exemplo: Se estamos no passo 2 de 3:
-            // (2 - 1) / (3 - 1) = 1 / 2 = 0.5 (ou seja, 50%)
+            // (stepAtual - 1) / (total - 1) * 100
             const activeIndex = step - 1;
             const percent = (activeIndex / (totalSteps - 1)) * 100;
             
@@ -867,14 +1226,11 @@
 
             // Atualiza as classes visuais (Cores)
             allSteps.forEach((stepEl, index) => {
-                // Remove tudo primeiro para garantir limpeza
                 stepEl.classList.remove('active', 'completed');
                 
                 if (index < activeIndex) {
-                    // Passos anteriores ficam "completos"
                     stepEl.classList.add('completed');
                 } else if (index === activeIndex) {
-                    // Passo atual fica "ativo"
                     stepEl.classList.add('active');
                 }
             });
@@ -907,14 +1263,37 @@
             window.scrollTo(0,0);
         }
 
-        function goToReview() {
+        // NOVO: Vai do Menu para Agenda
+        function goToSchedule() {
             if (cart.length === 0) { alert("Por favor, selecione ao menos um serviço."); return; }
+            triggerHaptic();
+            saveState();
+            
+            document.getElementById('step-menu').style.display = 'none';
+            document.getElementById('step-schedule').style.display = 'block';
+            updateProgressStep(3);
+            window.scrollTo(0,0);
+        }
 
+        // ALTERADO: Volta da Agenda para Menu
+        function backToMenu() {
+            triggerHaptic();
+            document.getElementById('step-schedule').style.display = 'none';
+            document.getElementById('step-menu').style.display = 'block';
+            updateProgressStep(2);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        // NOVO: Vai da Agenda para Revisão
+        function goToReview() {
+            // Validação opcional da agenda
+            // if(selectedDays.length === 0) { alert("Selecione pelo menos um dia."); return; }
+            
             triggerHaptic();
             saveState();
             
             const listContainer = document.getElementById('review-list-container');
-            listContainer.innerHTML = ''; // Limpa lista anterior
+            listContainer.innerHTML = ''; 
 
             cartObjects.forEach(item => {
                 const div = document.createElement('div');
@@ -925,6 +1304,16 @@
                 `;
                 listContainer.appendChild(div);
             });
+
+            // Mostra resumo da agenda
+            const schedDisplay = document.getElementById('review-schedule-display');
+            const schedDetails = document.getElementById('schedule-details').value;
+            let daysText = selectedDays.length > 0 ? selectedDays.join(', ') : "A combinar";
+            
+            schedDisplay.innerHTML = `<div>📅 <span>${daysText}</span></div>`;
+            if(schedDetails) {
+                 schedDisplay.innerHTML += `<div style="margin-left:10px;border-left:1px solid #444;padding-left:10px;font-style:italic">"${schedDetails}"</div>`;
+            }
 
             // Atualiza totais na tela de revisão
             document.getElementById('review-total-display').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
@@ -938,18 +1327,17 @@
             }
 
             // Troca de tela
-            document.getElementById('step-menu').style.display = 'none';
+            document.getElementById('step-schedule').style.display = 'none';
             document.getElementById('step-review').style.display = 'block';
-            updateProgressStep(3);
+            updateProgressStep(4);
             window.scrollTo(0,0);
         }
-
-        function backToMenu() {
+        
+        function backToSchedule() {
             triggerHaptic();
             document.getElementById('step-review').style.display = 'none';
-            document.getElementById('step-menu').style.display = 'block';
-            updateProgressStep(2);
-            window.scrollTo(0, document.body.scrollHeight); // Vai para o final do menu onde estava
+            document.getElementById('step-schedule').style.display = 'block';
+            updateProgressStep(3);
         }
 
         function toggleItem(el) {
@@ -966,8 +1354,16 @@
             if(el.classList.contains('selected')) {
                 el.classList.remove('selected'); 
                 total -= price; 
-                cart = cart.filter(i => i !== name);
-                cartObjects = cartObjects.filter(i => i.name !== name); // Remove objeto completo
+                
+                // Remove item do array de nomes
+                // Para o backup, o nome pode variar, então filtramos por includes se for backup
+                if (name.includes("Backup")) {
+                    cart = cart.filter(i => !i.includes("Backup"));
+                    cartObjects = cartObjects.filter(i => !i.name.includes("Backup"));
+                } else {
+                    cart = cart.filter(i => i !== name);
+                    cartObjects = cartObjects.filter(i => i.name !== name);
+                }
                 
                 if(!isNaN(fullPrice)) { totalSavings -= (fullPrice - price); }
                 
@@ -995,7 +1391,6 @@
                 checkRecommendation(name);
             }
             
-            // Removemos updatePriceDisplay() pois agora o total fica só na revisão
             saveState();
         }
 
@@ -1039,6 +1434,8 @@
             const dreamBudget = document.getElementById('dream-budget').value; 
             const dreamUsage = document.getElementById('dream-usage').value; 
             const dreamDetails = document.getElementById('dream-details').value;
+            const schedDetails = document.getElementById('schedule-details').value;
+            
             let diagnosisList = []; 
             document.querySelectorAll('input[name="sintoma"]:checked').forEach(cb => diagnosisList.push(cb.value)); 
             const diagnosisDetails = document.getElementById('diagnosis-details').value;
@@ -1050,9 +1447,15 @@
             const now = new Date(); const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
             const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
+            // Construção da string de agendamento
+            const daysStr = selectedDays.length > 0 ? selectedDays.join(', ') : "A combinar";
+            const scheduleFinal = `Dias: ${daysStr} | Obs: ${schedDetails}`;
+
             let fullObs = feedback;
             if(cart.includes('Consultoria de Peças') && (dreamUsage || dreamDetails)) fullObs += ` | [PC SONHOS]: ${dreamBudget} - ${dreamUsage} - ${dreamDetails}`;
             if(cart.includes('Diagnóstico Defeito') && (diagnosisList.length > 0 || diagnosisDetails)) fullObs += ` | [DIAGNÓSTICO]: ${diagnosisList.join(', ')} - ${diagnosisDetails}`;
+            // Adiciona agendamento na planilha também em obs ou campo separado se tiver
+            fullObs += ` | [AGENDA]: ${scheduleFinal}`;
 
             const data = { 
                 "Data": dateStr, 
@@ -1067,7 +1470,12 @@
             let msgZap = `Olá! Fiz o *Pedido ${orderID}*.\n👤 *${clientData.name}*\n💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n🛒 *Serviços:* \n${cart.join('\n')}\n`;
             if(cart.includes('Consultoria de Peças')) msgZap += `\n💭 *PC SONHOS:* ${dreamUsage} (${dreamBudget})\n`;
             if(cart.includes('Diagnóstico Defeito')) msgZap += `\n🚨 *SINTOMAS:* ${diagnosisList.join(', ')}\n`;
-            if(totalSavings > 0) msgZap += `\n🤑 *Economizei:* R$ ${totalSavings.toFixed(2).replace('.', ',')}\n`;
+            
+            // Adiciona Agenda no Zap
+            msgZap += `\n📅 *Disponibilidade:* ${daysStr}`;
+            if(schedDetails) msgZap += `\n🕒 *Obs Horário:* ${schedDetails}`;
+
+            if(totalSavings > 0) msgZap += `\n\n🤑 *Economizei:* R$ ${totalSavings.toFixed(2).replace('.', ',')}\n`;
             msgZap += `\nAguardo retorno!`;
 
             const linkZap = `https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`;
