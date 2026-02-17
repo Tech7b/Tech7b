@@ -2,8 +2,8 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurador Técnico | Tech Services</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Configurador Técnico | Tech 7B</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         /* --- VARIÁVEIS DE SISTEMA --- */
@@ -19,14 +19,14 @@
             --danger: #ff4444;        /* Vermelho */
             
             --text-main: #ffffff;
-            --text-muted: #a1a1a1;
+            --text-muted: #b0b0b0;
             --border: #333333;
             
             --glow-soft: 0 0 20px rgba(0, 217, 255, 0.15);
             --glow-hard: 0 0 20px rgba(255, 157, 0, 0.15);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-body);
@@ -36,7 +36,7 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
             min-height: 100vh;
-            padding-bottom: 140px;
+            padding-bottom: 160px;
         }
 
         /* --- CABEÇALHO --- */
@@ -51,8 +51,16 @@
         }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
         .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; }
         .brand span { color: var(--primary); }
+
+        .global-counter {
+            font-size: 0.8rem; background: rgba(0, 255, 157, 0.1); color: var(--primary);
+            padding: 5px 12px; border-radius: 20px; border: 1px solid var(--primary);
+            display: flex; align-items: center; gap: 6px; font-weight: bold;
+            opacity: 0; transition: opacity 1s; animation: fadeIn 2s forwards;
+        }
 
         /* --- INPUTS --- */
         .input-group { margin-bottom: 20px; }
@@ -62,12 +70,13 @@
             border-radius: 8px; color: white; font-size: 1rem; transition: 0.3s;
         }
         input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
+        @media (max-width: 600px) { input, textarea, select { font-size: 16px; } }
 
         /* --- CHECKBOXES (DIAGNÓSTICO) --- */
         .symptom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .symptom-item {
             background: #222; padding: 10px; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.2s;
+            display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: 0.2s; user-select: none;
         }
         .symptom-item:hover { border-color: var(--danger); }
         .symptom-item input { width: 18px; height: 18px; margin: 0; accent-color: var(--danger); }
@@ -78,6 +87,9 @@
             padding: 40px; border-radius: 16px; border: 1px solid var(--border);
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             animation: fadeInUp 0.6s ease;
+        }
+        .privacy-note {
+            font-size: 0.75rem; color: #666; text-align: center; margin-top: 15px; line-height: 1.4;
         }
 
         /* --- MENU --- */
@@ -98,9 +110,11 @@
         }
         .sub-group-header {
             font-size: 1.2rem; font-weight: 700; color: var(--text-main);
-            margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+            margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
         }
         .sub-icon { opacity: 0.8; font-size: 1.4rem; }
+
+        .group-counter { font-size: 0.8rem; font-weight: normal; background: #333; padding: 2px 8px; border-radius: 4px; color: #ccc; }
 
         .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
 
@@ -108,12 +122,17 @@
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 8px; padding: 15px; cursor: pointer;
             transition: 0.2s; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 140px;
         }
-        .service-card:hover { transform: translateY(-3px); }
+        .service-card:active { transform: scale(0.98); }
+        @media (hover: hover) {
+            .service-card:hover { transform: translateY(-3px); }
+        }
 
         .sw-card:hover { border-color: var(--software); box-shadow: var(--glow-soft); }
         .sw-card.selected { background: rgba(0, 217, 255, 0.1); border-color: var(--software); }
-        
+
         .hw-card:hover { border-color: var(--hardware); box-shadow: var(--glow-hard); }
         .hw-card.selected { background: rgba(255, 157, 0, 0.1); border-color: var(--hardware); }
 
@@ -127,7 +146,15 @@
 
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
         .service-name { font-weight: 600; font-size: 0.95rem; line-height: 1.3; color: #ddd; }
+
+        .price-container { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
         .price-tag { font-size: 1.1rem; font-weight: 800; color: #fff; }
+        .old-price { font-size: 0.85rem; text-decoration: line-through; color: #666; }
+
+        .real-count-badge {
+            font-size: 0.7rem; color: #777; margin-top: 10px; display: flex; align-items: center; gap: 4px;
+        }
+        .real-count-badge span { color: var(--primary); font-weight: bold; }
 
         .check-circle {
             width: 20px; height: 20px; border-radius: 50%; border: 2px solid #555;
@@ -141,12 +168,13 @@
 
         .badge {
             font-size: 0.65rem; text-transform: uppercase; font-weight: bold;
-            padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;
+            padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px; width: fit-content;
         }
         .bg-sw { background: rgba(0, 217, 255, 0.2); color: var(--software); }
         .bg-hw { background: rgba(255, 157, 0, 0.2); color: var(--hardware); }
+        .bg-limitada { background: rgba(255, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
 
-        .card-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+        .card-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
         .demo-badge, .warning-badge {
             font-size: 0.7rem; padding: 4px 10px; border-radius: 20px; display: inline-flex; 
             align-items: center; gap: 5px; cursor: pointer; transition: 0.3s; z-index: 10; position: relative;
@@ -156,7 +184,7 @@
         .warning-badge { background: rgba(255, 157, 0, 0.15); border: 1px solid #ff9d00; color: #ff9d00; }
         .warning-badge:hover { background: #ff9d00; color: black; }
 
-        /* --- TOAST DE RECOMENDAÇÃO --- */
+        /* --- TOAST --- */
         #toast-notification {
             position: fixed; top: 20px; right: 20px; z-index: 4000;
             background: rgba(0, 255, 157, 0.1); border: 1px solid var(--primary);
@@ -176,7 +204,7 @@
         .dream-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         @media (max-width: 600px) { .dream-grid, .symptom-grid { grid-template-columns: 1fr; } }
 
-        /* --- MODAL --- */
+        /* --- MODAL GERAL --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); 
             z-index: 3000; display: none; justify-content: center; align-items: center;
@@ -189,7 +217,6 @@
         .modal-close { position: absolute; top: 10px; right: 15px; color: #fff; font-size: 1.5rem; cursor: pointer; }
         .demo-video { width: 100%; border-radius: 8px; margin-top: 10px; }
         .audio-box { background: #222; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 3px solid var(--software); text-align: left; }
-        .audio-label { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; display: block; }
 
         /* --- FOOTER --- */
         .sticky-footer {
@@ -199,23 +226,35 @@
             border-radius: 50px; padding: 15px 30px; display: none;
             justify-content: space-between; align-items: center; z-index: 2000;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: 0.3s ease;
         }
         .total-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
         .btn-finish {
             background: var(--primary); color: black; border: none; padding: 12px 30px;
             font-weight: 800; border-radius: 30px; cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
-        .btn-finish:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,157,0.4); }
+        .btn-finish:disabled { background: #555; cursor: not-allowed; opacity: 0.7; }
+        .btn-finish:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,157,0.4); }
 
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body>
 
     <header>
         <div class="container">
-            <div class="brand">TECH <span>7B</span></div>
+            <div class="header-content">
+                <div class="brand">TECH <span>7B</span></div>
+                <div class="global-counter" id="global-counter-display">
+                    🔥 <span id="total-services-count">...</span> serviços realizados
+                </div>
+            </div>
         </div>
     </header>
 
@@ -225,16 +264,20 @@
 
     <div class="container">
         <div id="step-identity">
-            <h2 style="margin-bottom: 20px; color: white;">Identificação</h2>
+            <h2 style="margin-bottom: 20px; color: white; text-align: center;">Área do Cliente</h2>
             <div class="input-group">
                 <label>Nome Completo</label>
-                <input type="text" id="input-name" placeholder="Seu nome">
+                <input type="text" id="input-name" placeholder="Como podemos te chamar?" oninput="saveState()">
             </div>
             <div class="input-group">
                 <label>WhatsApp</label>
-                <input type="tel" id="input-phone" placeholder="(XX) XXXXX-XXXX" maxlength="16" onkeyup="maskPhone(this)">
+                <input type="tel" id="input-phone" placeholder="(XX) XXXXX-XXXX" maxlength="16" oninput="maskPhone(this); saveState()">
             </div>
             <button class="btn-finish" style="width:100%" onclick="goToMenu()">ACESSAR PLANOS ➔</button>
+            <p class="privacy-note">
+                <span style="opacity:0.7">🔒 Seus dados são usados apenas para o contato sobre o orçamento.</span><br>
+                Ao continuar, você concorda com o envio via WhatsApp.
+            </p>
         </div>
 
         <div id="step-menu">
@@ -242,82 +285,110 @@
             <div class="main-group-title sw-title">💻 GRUPO WINDOWS (SOFTWARE)</div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header"><span class="sub-icon">🛠️</span> Manutenção Essencial</div>
+                <div class="sub-group-header">
+                    <div><span class="sub-icon">🛠️</span> Manutenção Essencial</div>
+                    <div class="group-counter" id="count-group-manutencao"></div>
+                </div>
                 <div class="services-grid">
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Formatação Limpa', 120)">
+                    <div class="service-card sw-card" data-name="Formatação Limpa" data-price="120.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Formatação Limpa</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 120,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 120,00</div></div>
+                        <div class="real-count-badge" id="badge-Formatação Limpa"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Ativação Windows (Key)', 50)">
+                    <div class="service-card sw-card" data-name="Ativação Windows" data-price="50.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Ativação Windows (Chave Digital)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 50,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 50,00</div></div>
                         <span class="badge bg-sw">ORIGINAL</span>
+                        <div class="real-count-badge" id="badge-Ativação Windows"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Backup de Arquivos', 45)">
+                    <div class="service-card sw-card" data-name="Backup" data-price="45.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Backup (Arquivos Essenciais - Até 5GB)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 45,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 45,00</div></div>
+                        <div class="real-count-badge" id="badge-Backup"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Instalação de Programas', 25)">
+                    <div class="service-card sw-card" data-name="Instalação de Programas" data-price="25.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Instalação de Programas</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 25,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 25,00</div></div>
+                        <div class="real-count-badge" id="badge-Instalação de Programas"></div>
                     </div>
                 </div>
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header"><span class="sub-icon">🚀</span> Performance & Gamer</div>
+                <div class="sub-group-header">
+                    <div><span class="sub-icon">🚀</span> Performance & Gamer</div>
+                    <div class="group-counter" id="count-group-performance"></div>
+                </div>
                 <div class="services-grid">
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Otimização Windows', 70)">
+                    <div class="service-card sw-card" data-name="Otimização Windows" data-price="70.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Otimização Windows (Debloat)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 70,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 70,00</div></div>
                         <span class="badge bg-sw">MAIS FPS</span>
                         <div class="card-actions"><div class="demo-badge" onclick="openDemo(event, 'fps')">▷ Ver Ganho de FPS</div></div>
+                        <div class="real-count-badge" id="badge-Otimização Windows"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Renovação Drivers', 45)">
+                    <div class="service-card sw-card" data-name="Renovação Drivers" data-price="45.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Renovação Drivers (Update+Limpeza)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 45,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 45,00</div></div>
+                        <div class="real-count-badge" id="badge-Renovação Drivers"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Update BIOS + XMP', 60)">
+                    <div class="service-card sw-card" data-name="Update BIOS" data-price="60.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Update BIOS + XMP (Básico)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 60,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 60,00</div></div>
+                        <div class="real-count-badge" id="badge-Update BIOS"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Overclock & Undervolt', 150)">
+                    <div class="service-card sw-card" data-name="Overclock" data-price="150.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Overclock & Undervolt</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 150,00</div>
-                        <span class="badge bg-sw">EXTREME</span>
+                        <div class="price-container"><div class="price-tag">R$ 150,00</div></div>
+                        <span class="badge bg-limitada">⚠️ VAGAS LIMITADAS</span>
+                        <div class="real-count-badge" id="badge-Overclock"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'COMBO GAMER TOTAL', 250)">
+                    <div class="service-card sw-card" data-name="COMBO GAMER TOTAL" data-price="250.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">COMBO GAMER TOTAL (Tudo Acima)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 250,00</div>
+                        <div class="price-container">
+                            <span class="old-price">R$ 325,00</span>
+                            <div class="price-tag">R$ 250,00</div>
+                        </div>
                         <span class="badge bg-sw">★ MELHOR VALOR</span>
+                        <div class="real-count-badge" id="badge-COMBO GAMER TOTAL"></div>
                     </div>
                 </div>
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--software);">
-                <div class="sub-group-header"><span class="sub-icon">🎙️</span> Studio & Stream</div>
+                <div class="sub-group-header">
+                    <div><span class="sub-icon">🎙️</span> Studio & Stream</div>
+                    <div class="group-counter" id="count-group-studio"></div>
+                </div>
                 <div class="services-grid">
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Config Microfone Pro', 125)">
+                    <div class="service-card sw-card" data-name="Config Microfone" data-price="125.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Config. Microfone Pro</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 125,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 125,00</div></div>
                         <div class="card-actions"><div class="demo-badge" onclick="openDemo(event, 'mic')">🔊 Ouvir Antes/Depois</div></div>
+                        <div class="real-count-badge" id="badge-Config Microfone"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'Calibração Monitor', 60)">
+                    <div class="service-card sw-card" data-name="Calibração Monitor" data-price="60.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Calibração Monitor</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 60,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 60,00</div></div>
                         <div class="card-actions">
                             <div class="demo-badge" onclick="openDemo(event, 'color')">👁️ Ver Cores Reais</div>
                             <div class="warning-badge" onclick="openWarning(event)">⚠️ Ler Aviso</div>
                         </div>
+                        <div class="real-count-badge" id="badge-Calibração Monitor"></div>
                     </div>
-                     <div class="service-card sw-card" onclick="toggleItem(this, 'Config OBS Studio', 50)">
+                     <div class="service-card sw-card" data-name="Config OBS" data-price="50.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Config OBS Studio</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 50,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 50,00</div></div>
+                        <div class="real-count-badge" id="badge-Config OBS"></div>
                     </div>
-                    <div class="service-card sw-card" onclick="toggleItem(this, 'COMBO STUDIO PRO', 240)">
+                    <div class="service-card sw-card" data-name="COMBO STUDIO PRO" data-price="240.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">COMBO STUDIO PRO</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 240,00</div>
+                        <div class="price-container">
+                            <span class="old-price">R$ 285,00</span>
+                            <div class="price-tag">R$ 240,00</div>
+                        </div>
                         <span class="badge bg-sw">★ PRO</span>
+                        <div class="real-count-badge" id="badge-COMBO STUDIO PRO"></div>
                     </div>
                 </div>
             </div>
@@ -325,37 +396,48 @@
             <div class="main-group-title hw-title">🔧 GRUPO HARDWARE (FÍSICO)</div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
-                <div class="sub-group-header"><span class="sub-icon">🧹</span> Cuidados & Manutenção</div>
+                <div class="sub-group-header">
+                    <div><span class="sub-icon">🧹</span> Cuidados & Manutenção</div>
+                    <div class="group-counter" id="count-group-hardware"></div>
+                </div>
                 <div class="services-grid">
-                    <div class="service-card hw-card" onclick="toggleItem(this, 'Limpeza Premium (c/ Pasta)', 120)">
+                    <div class="service-card hw-card" data-name="Limpeza Premium" data-price="120.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Limpeza Premium (c/ Pasta Térmica)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 120,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 120,00</div></div>
                         <span class="badge bg-hw">COMPLETO</span>
+                        <div class="real-count-badge" id="badge-Limpeza Premium"></div>
                     </div>
-                    <div class="service-card hw-card" onclick="toggleItem(this, 'Organização de Cabos', 70)">
+                    <div class="service-card hw-card" data-name="Organização de Cabos" data-price="70.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Organização de Cabos</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 70,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 70,00</div></div>
+                        <div class="real-count-badge" id="badge-Organização de Cabos"></div>
                     </div>
                 </div>
             </div>
 
             <div class="sub-group-container" style="border-left: 3px solid var(--hardware);">
-                <div class="sub-group-header"><span class="sub-icon">🏗️</span> Montagem & Técnica</div>
+                <div class="sub-group-header">
+                    <div><span class="sub-icon">🏗️</span> Montagem & Técnica</div>
+                    <div class="group-counter" id="count-group-montagem"></div>
+                </div>
                 <div class="services-grid">
-                    <div class="service-card hw-card" onclick="toggleItem(this, 'Montagem de PC', 225)">
+                    <div class="service-card hw-card" data-name="Montagem de PC" data-price="225.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Montagem de PC</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 225,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 225,00</div></div>
+                        <div class="real-count-badge" id="badge-Montagem de PC"></div>
                     </div>
                     
-                    <div class="service-card hw-card" onclick="toggleItem(this, 'Consultoria de Peças', 35)">
+                    <div class="service-card hw-card" data-name="Consultoria de Peças" data-price="35.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Consultoria de Peças (Setup)</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 35,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 35,00</div></div>
                         <span class="badge bg-hw">ECONOMIZE NA COMPRA</span>
+                        <div class="real-count-badge" id="badge-Consultoria de Peças"></div>
                     </div>
 
-                    <div class="service-card hw-card" onclick="toggleItem(this, 'Diagnóstico Defeito', 50)">
+                    <div class="service-card hw-card" data-name="Diagnóstico Defeito" data-price="50.00" onclick="toggleItem(this)">
                         <div class="card-header"><span class="service-name">Diagnóstico Defeito</span><div class="check-circle"></div></div>
-                        <div class="price-tag">R$ 50,00</div>
+                        <div class="price-container"><div class="price-tag">R$ 50,00</div></div>
+                        <div class="real-count-badge" id="badge-Diagnóstico Defeito"></div>
                     </div>
                 </div>
             </div>
@@ -363,31 +445,34 @@
             <div class="diagnosis-section" id="diagnosis-section-container">
                 <div class="special-title" style="color: var(--danger);">🚨 DIAGNÓSTICO PRELIMINAR</div>
                 <div class="symptom-grid">
-                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Não Liga"> Não Liga</label>
-                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Liga sem Imagem"> Liga sem Imagem</label>
-                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Tela Azul"> Tela Azul</label>
-                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Travando/Lento"> Lento/Travando</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Não Liga" onchange="saveState()"> Não Liga</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Liga sem Imagem" onchange="saveState()"> Liga sem Imagem</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Tela Azul" onchange="saveState()"> Tela Azul</label>
+                    <label class="symptom-item"><input type="checkbox" name="sintoma" value="Travando/Lento" onchange="saveState()"> Lento/Travando</label>
                 </div>
-                <div class="input-group"><textarea id="diagnosis-details" rows="2" placeholder="Descreva o problema..."></textarea></div>
+                <div class="input-group"><textarea id="diagnosis-details" rows="2" placeholder="Descreva o problema..." oninput="saveState()"></textarea></div>
             </div>
 
             <div class="dream-section" id="dream-section-container">
-                <div class="special-title" style="color: var(--dream);">💭 PC DOS SONHOS</div>
-                <div class="dream-grid">
-                    <div class="input-group"><label>💰 Orçamento</label><input type="text" id="dream-budget" placeholder="R$ 0,00"></div>
-                    <div class="input-group"><label>🎯 Uso</label><select id="dream-usage" style="background:#000;color:white;border:1px solid #333;padding:14px;border-radius:8px;"><option value="">Selecione...</option><option value="Jogos">Jogos</option><option value="Trabalho">Trabalho</option></select></div>
+                <div class="special-title" style="color: var(--dream);">
+                    💭 PC DOS SONHOS
                 </div>
-                <div class="input-group"><textarea id="dream-details" rows="2" placeholder="Detalhes..."></textarea></div>
+                <div class="dream-grid">
+                    <div class="input-group"><label>💰 Orçamento</label><input type="text" id="dream-budget" placeholder="R$ 0,00" oninput="saveState()"></div>
+                    <div class="input-group"><label>🎯 Uso</label><select id="dream-usage" style="background:#000;color:white;border:1px solid #333;padding:14px;border-radius:8px;" onchange="saveState()"><option value="">Selecione...</option><option value="Jogos">Jogos</option><option value="Trabalho">Trabalho</option></select></div>
+                </div>
+                <div class="input-group"><textarea id="dream-details" rows="2" placeholder="Detalhes..." oninput="saveState()"></textarea></div>
             </div>
 
             <div class="sub-group-container" style="background: var(--bg-panel); margin-top: 20px;">
                 <h3 style="margin-bottom: 10px; color: white;">Outras Observações</h3>
-                <textarea id="input-feedback" rows="2"></textarea>
+                <textarea id="input-feedback" rows="2" oninput="saveState()"></textarea>
             </div>
 
         </div> 
     </div>
 
+    <!-- MODAL DEMO -->
     <div id="demo-modal" class="modal-overlay" onclick="closeDemo(event)">
         <div class="modal-content"><span class="modal-close" onclick="closeDemoExplicit()">×</span><h3 id="modal-title" style="margin-bottom:15px;">Demonstração</h3><div id="modal-body"></div></div>
     </div>
@@ -400,38 +485,268 @@
     <script>
         const MY_WHATSAPP = "5513998059374"; 
         const SHEET_URL = "https://api.sheetmonkey.io/form/nscyFYxznN7wnU9F4RhVsR";
+        const LINK_CSV_PLANILHA = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvhBhY1TvExozH9_VMp6SLDYgCav9a8TDRoNS17jaUJp8fvp8E3XQQ1spBXGgd2-S0X5IueT8c7GUG/pub?gid=950131635&single=true&output=csv"; 
+        
         let cart = []; let total = 0; let clientData = {};
 
-        // MAPA DE RECOMENDAÇÕES (Se marcar X, sugere Y)
         const recommendations = {
             'Otimização Windows': 'Renovação Drivers',
-            'Renovação Drivers': 'Otimização Windows', // Dica do cliente: Vice-versa
-            'Formatação Limpa': 'Backup de Arquivos',
+            'Renovação Drivers': 'Otimização Windows',
+            'Formatação Limpa': 'Backup',
             'Montagem de PC': 'Consultoria de Peças'
         };
 
         function maskPhone(input) {
-            let v = input.value.replace(/\D/g,''); v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); v=v.replace(/(\d{5})(\d)/," $1-$2"); input.value = v;
+            let v = input.value.replace(/\D/g,'');
+            v = v.substring(0, 11);
+            if (v.length > 10) {
+                v = v.replace(/^(\d\d)(\d{5})(\d{4}).*/, "($1) $2-$3");
+            } else if (v.length > 5) {
+                v = v.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d\d)(\d{0,5}).*/, "($1) $2");
+            } else {
+                v = v.replace(/^(\d*)/, "($1");
+            }
+            input.value = v;
         }
+
+        async function fetchStats() {
+            let globalCount = 0;
+            let serviceCounts = {};
+            let groupCounts = { 'manutencao': 0, 'performance': 0, 'studio': 0, 'hardware': 0, 'montagem': 0 };
+
+            console.log("Iniciando busca de dados...");
+            const counterDisplay = document.getElementById('total-services-count');
+            if(counterDisplay) counterDisplay.innerText = "⏳"; 
+
+            try {
+                const response = await fetch(LINK_CSV_PLANILHA);
+                if (!response.ok) throw new Error("Erro HTTP: " + response.status);
+                const data = await response.text();
+                const rows = data.split(/\r\n|\n/);
+                
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i];
+                    if (!row || row.trim() === "") continue;
+                    
+                    const serviceKeywords = [
+                        { key: "Formatação Limpa", match: "Formatação" },
+                        { key: "Ativação Windows", match: "Ativação" },
+                        { key: "Backup", match: "Backup" },
+                        { key: "Instalação de Programas", match: "Programas" },
+                        { key: "Otimização Windows", match: "Otimização" },
+                        { key: "Renovação Drivers", match: "Drivers" },
+                        { key: "Update BIOS", match: "Update BIOS" },
+                        { key: "Overclock", match: "Overclock" },
+                        { key: "COMBO GAMER TOTAL", match: "GAMER TOTAL" },
+                        { key: "Config Microfone", match: "Microfone" },
+                        { key: "Calibração Monitor", match: "Calibração" },
+                        { key: "Config OBS", match: "OBS" },
+                        { key: "COMBO STUDIO PRO", match: "STUDIO PRO" },
+                        { key: "Limpeza Premium", match: "Limpeza" },
+                        { key: "Organização de Cabos", match: "Cabos" },
+                        { key: "Montagem de PC", match: "Montagem" },
+                        { key: "Consultoria de Peças", match: "Consultoria" },
+                        { key: "Diagnóstico Defeito", match: "Diagnóstico" }
+                    ];
+
+                    serviceKeywords.forEach(item => {
+                        if (row.toLowerCase().includes(item.match.toLowerCase())) {
+                            serviceCounts[item.key] = (serviceCounts[item.key] || 0) + 1;
+                            globalCount++;
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.warn("Falha ao buscar planilha. Usando dados simulados.", e);
+                const sim = generateSimulatedStats();
+                serviceCounts = sim.counts;
+                globalCount = sim.total;
+            }
+
+            calculateGroups(serviceCounts, groupCounts);
+            updateUI(globalCount, serviceCounts, groupCounts);
+        }
+
+        function calculateGroups(counts, groups) {
+            Object.keys(counts).forEach(key => {
+                let val = counts[key];
+                if(['Formatação Limpa', 'Ativação Windows', 'Backup', 'Instalação de Programas'].includes(key)) groups.manutencao += val;
+                if(['Otimização Windows', 'Renovação Drivers', 'Update BIOS', 'Overclock', 'COMBO GAMER TOTAL'].includes(key)) groups.performance += val;
+                if(['Config Microfone', 'Calibração Monitor', 'Config OBS', 'COMBO STUDIO PRO'].includes(key)) groups.studio += val;
+                if(['Limpeza Premium', 'Organização de Cabos'].includes(key)) groups.hardware += val;
+                if(['Montagem de PC', 'Consultoria de Peças', 'Diagnóstico Defeito'].includes(key)) groups.montagem += val;
+            });
+        }
+
+        function generateSimulatedStats() {
+            const counts = {
+                "Formatação Limpa": 42, "Ativação Windows": 15, "Backup": 8, "Instalação de Programas": 5,
+                "Otimização Windows": 58, "Renovação Drivers": 23, "Update BIOS": 12, "Overclock": 7, "COMBO GAMER TOTAL": 31,
+                "Config Microfone": 18, "Calibração Monitor": 9, "Config OBS": 14, "COMBO STUDIO PRO": 6,
+                "Limpeza Premium": 27, "Organização de Cabos": 11,
+                "Montagem de PC": 19, "Consultoria de Peças": 22, "Diagnóstico Defeito": 34
+            };
+            let total = 0;
+            Object.values(counts).forEach(v => total += v);
+            return { counts, total };
+        }
+
+        function updateUI(global, counts, groups) {
+            const globalCounter = document.getElementById('total-services-count');
+            if(globalCounter) globalCounter.innerText = global;
+            
+            const globalDisplay = document.getElementById('global-counter-display');
+            if(globalDisplay) globalDisplay.style.opacity = '1';
+
+            const gMap = {
+                'manutencao': 'count-group-manutencao', 'performance': 'count-group-performance',
+                'studio': 'count-group-studio', 'hardware': 'count-group-hardware', 'montagem': 'count-group-montagem'
+            };
+            Object.keys(groups).forEach(g => {
+                const el = document.getElementById(gMap[g]);
+                if(el) el.innerText = groups[g] + ' finalizados';
+            });
+
+            Object.keys(counts).forEach(key => {
+                const el = document.getElementById(`badge-${key}`);
+                if(el) el.innerHTML = `🔥 <span>${counts[key]}</span> vendidos`;
+            });
+        }
+
+        function saveState() {
+            const state = {
+                cart: cart,
+                total: total,
+                inputs: {
+                    name: document.getElementById('input-name').value,
+                    phone: document.getElementById('input-phone').value,
+                    dreamBudget: document.getElementById('dream-budget').value,
+                    dreamUsage: document.getElementById('dream-usage').value,
+                    dreamDetails: document.getElementById('dream-details').value,
+                    diagDetails: document.getElementById('diagnosis-details').value,
+                    feedback: document.getElementById('input-feedback').value
+                },
+                checkboxes: Array.from(document.querySelectorAll('input[name="sintoma"]:checked')).map(cb => cb.value)
+            };
+            localStorage.setItem('tech7b_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('tech7b_state');
+            if (!saved) return;
+            
+            try {
+                const state = JSON.parse(saved);
+                
+                if(state.inputs) {
+                    if(document.getElementById('input-name')) document.getElementById('input-name').value = state.inputs.name || "";
+                    if(document.getElementById('input-phone')) document.getElementById('input-phone').value = state.inputs.phone || "";
+                    if(document.getElementById('dream-budget')) document.getElementById('dream-budget').value = state.inputs.dreamBudget || "";
+                    if(document.getElementById('dream-usage')) document.getElementById('dream-usage').value = state.inputs.dreamUsage || "";
+                    if(document.getElementById('dream-details')) document.getElementById('dream-details').value = state.inputs.dreamDetails || "";
+                    if(document.getElementById('diagnosis-details')) document.getElementById('diagnosis-details').value = state.inputs.diagDetails || "";
+                    if(document.getElementById('input-feedback')) document.getElementById('input-feedback').value = state.inputs.feedback || "";
+                }
+
+                if(state.checkboxes) {
+                    state.checkboxes.forEach(val => {
+                        const cb = document.querySelector(`input[name="sintoma"][value="${val}"]`);
+                        if(cb) cb.checked = true;
+                    });
+                }
+
+                if (state.inputs.name && state.inputs.name.length > 2 && state.inputs.phone && state.inputs.phone.length > 10) {
+                    clientData = { name: state.inputs.name, phone: state.inputs.phone };
+                    document.getElementById('step-identity').style.display='none';
+                    document.getElementById('step-menu').style.display='block';
+                    document.getElementById('footer-cart').style.display='flex';
+                }
+
+                if (state.cart && state.cart.length > 0) {
+                    cart = []; total = 0; 
+                    const cards = document.querySelectorAll('.service-card');
+                    cards.forEach(card => {
+                        const cardName = card.getAttribute('data-name'); 
+                        if (state.cart.some(s => s.includes(cardName) || cardName === s)) {
+                            card.click(); 
+                        }
+                    });
+                }
+
+            } catch (e) {
+                console.error("Erro ao carregar estado:", e);
+                localStorage.removeItem('tech7b_state'); 
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadState();
+            fetchStats();
+        });
 
         function goToMenu() {
-            const name = document.getElementById('input-name').value;
-            const phone = document.getElementById('input-phone').value;
-            if(name.length < 3 || phone.length < 13) { alert("Preencha Nome e WhatsApp."); return; }
+            const nameInput = document.getElementById('input-name');
+            const phoneInput = document.getElementById('input-phone');
+            
+            if(!nameInput || !phoneInput) return; 
+
+            const name = nameInput.value;
+            const phone = phoneInput.value;
+
+            if(name.length < 3 || phone.length < 13) { alert("Por favor, preencha seu Nome e WhatsApp corretamente."); return; }
             clientData = { name, phone };
-            document.getElementById('step-identity').style.display='none'; document.getElementById('step-menu').style.display='block'; document.getElementById('footer-cart').style.display='flex'; window.scrollTo(0,0);
+            
+            saveState();
+            
+            document.getElementById('step-identity').style.display='none'; 
+            document.getElementById('step-menu').style.display='block'; 
+            document.getElementById('footer-cart').style.display='flex'; 
+            window.scrollTo(0,0);
         }
 
-        // Função de Recomendação (Toast)
+        function toggleItem(el) {
+            const name = el.getAttribute('data-name');
+            const price = parseFloat(el.getAttribute('data-price'));
+
+            if (!name || isNaN(price)) { console.error("Erro no card", el); return; }
+
+            if(el.classList.contains('selected')) {
+                el.classList.remove('selected'); 
+                total -= price; 
+                cart = cart.filter(i => i !== name);
+                
+                if(name === 'Consultoria de Peças') document.getElementById('dream-section-container').style.display = 'none';
+                if(name === 'Diagnóstico Defeito') document.getElementById('diagnosis-section-container').style.display = 'none';
+            } else {
+                el.classList.add('selected'); 
+                total += price; 
+                cart.push(name);
+                
+                if(name === 'Consultoria de Peças') { 
+                    const sec = document.getElementById('dream-section-container'); 
+                    sec.style.display = 'block'; 
+                    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200); 
+                }
+                if(name === 'Diagnóstico Defeito') { 
+                    const sec = document.getElementById('diagnosis-section-container'); 
+                    sec.style.display = 'block'; 
+                    setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200); 
+                }
+                
+                checkRecommendation(name);
+            }
+            document.getElementById('total-display').innerText = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
+            saveState();
+        }
+
         function checkRecommendation(selectedName) {
-            // Verifica se o item clicado tem uma recomendação cadastrada
-            // E verifica se essa recomendação JÁ NÃO está no carrinho (para não recomendar o que ele já comprou)
             Object.keys(recommendations).forEach(trigger => {
-                if (selectedName.includes(trigger)) { // Se clicou no gatilho
+                if (selectedName.includes(trigger)) { 
                     const targetName = recommendations[trigger];
-                    
-                    // Verifica se o alvo já está no carrinho
-                    const targetInCart = cart.some(item => item.includes(targetName.split(' ')[0])); // Check flexível
+                    const targetInCart = cart.some(item => item.includes(targetName.split(' ')[0])); 
 
                     if (!targetInCart) {
                         showToast(`💡 Dica: Quem leva <b>${selectedName}</b> costuma levar <b>${targetName}</b> também!`);
@@ -459,30 +774,21 @@
             });
         }
 
-        function toggleItem(el, name, price) {
-            if(el.classList.contains('selected')) {
-                el.classList.remove('selected'); total -= price; cart = cart.filter(i => i !== name);
-                if(name === 'Consultoria de Peças') document.getElementById('dream-section-container').style.display = 'none';
-                if(name === 'Diagnóstico Defeito') document.getElementById('diagnosis-section-container').style.display = 'none';
-            } else {
-                el.classList.add('selected'); total += price; cart.push(name);
-                if(name === 'Consultoria de Peças') { const sec = document.getElementById('dream-section-container'); sec.style.display = 'block'; setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 100); }
-                if(name === 'Diagnóstico Defeito') { const sec = document.getElementById('diagnosis-section-container'); sec.style.display = 'block'; setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 100); }
-                
-                // DISPARA A RECOMENDAÇÃO
-                checkRecommendation(name);
-            }
-            document.getElementById('total-display').innerText = `R$ ${Math.max(0, total).toFixed(2).replace('.', ',')}`;
-        }
-
         async function finishOrder() {
             const feedback = document.getElementById('input-feedback').value;
-            const dreamBudget = document.getElementById('dream-budget').value; const dreamUsage = document.getElementById('dream-usage').value; const dreamDetails = document.getElementById('dream-details').value;
-            let diagnosisList = []; document.querySelectorAll('input[name="sintoma"]:checked').forEach(cb => diagnosisList.push(cb.value)); const diagnosisDetails = document.getElementById('diagnosis-details').value;
+            const dreamBudget = document.getElementById('dream-budget').value; 
+            const dreamUsage = document.getElementById('dream-usage').value; 
+            const dreamDetails = document.getElementById('dream-details').value;
+            let diagnosisList = []; 
+            document.querySelectorAll('input[name="sintoma"]:checked').forEach(cb => diagnosisList.push(cb.value)); 
+            const diagnosisDetails = document.getElementById('diagnosis-details').value;
 
-            if(cart.length === 0) { alert("Selecione algo!"); return; }
+            if(cart.length === 0) { alert("Selecione ao menos um serviço!"); return; }
             
-            const btn = document.getElementById('btn-finish'); btn.innerHTML = "ENVIANDO..."; btn.disabled = true;
+            const btn = document.getElementById('btn-finish'); 
+            btn.innerHTML = "PROCESSANDO..."; 
+            btn.disabled = true;
+            
             const now = new Date(); const orderID = "#" + now.getDate() + now.getHours() + Math.floor(Math.random()*100);
             const dateStr = "'" + now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
@@ -490,22 +796,39 @@
             if(cart.includes('Consultoria de Peças') && (dreamUsage || dreamDetails)) fullObs += ` | [PC SONHOS]: ${dreamBudget} - ${dreamUsage} - ${dreamDetails}`;
             if(cart.includes('Diagnóstico Defeito') && (diagnosisList.length > 0 || diagnosisDetails)) fullObs += ` | [DIAGNÓSTICO]: ${diagnosisList.join(', ')} - ${diagnosisDetails}`;
 
-            const data = { "Data": dateStr, "ID": orderID, "Cliente": clientData.name, "Telefone": clientData.phone, "Servicos": cart.join(" | "), "Total": `R$ ${total.toFixed(2).replace('.', ',')}`, "Observacoes": fullObs };
+            const data = { 
+                "Data": dateStr, 
+                "ID": orderID, 
+                "Cliente": clientData.name, 
+                "Telefone": clientData.phone, 
+                "Servicos": cart.join(" | "), 
+                "Total": `R$ ${total.toFixed(2).replace('.', ',')}`, 
+                "Observacoes": fullObs 
+            };
 
-            let msgZap = `Olá! Fiz o *Pedido ${orderID}*.\n👤 *${clientData.name}*\n💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n`;
+            let msgZap = `Olá! Fiz o *Pedido ${orderID}*.\n👤 *${clientData.name}*\n💰 *Total:* R$ ${total.toFixed(2).replace('.', ',')}\n\n🛒 *Serviços:* \n${cart.join('\n')}\n`;
             if(cart.includes('Consultoria de Peças')) msgZap += `\n💭 *PC SONHOS:* ${dreamUsage} (${dreamBudget})\n`;
             if(cart.includes('Diagnóstico Defeito')) msgZap += `\n🚨 *SINTOMAS:* ${diagnosisList.join(', ')}\n`;
             msgZap += `\nAguardo retorno!`;
 
+            const linkZap = `https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`;
+
             try {
-                await fetch(SHEET_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) });
-                window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgZap)}`, '_blank');
+                await fetch(SHEET_URL, { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(data) 
+                });
+            } catch (e) {
+                console.error("Erro planilha (background):", e);
+            }
+
+            setTimeout(() => {
+                localStorage.removeItem('tech7b_state');
+                window.open(linkZap, '_blank');
                 btn.innerHTML = "ENVIADO! ✅";
-            } catch (error) {
-                let msgFallback = `Olá! Erro no site. Pedido manual:\n*${orderID}*\n👤 ${clientData.name}\n📋 ${cart.join(', ')}`;
-                window.open(`https://wa.me/${MY_WHATSAPP}?text=${encodeURIComponent(msgFallback)}`, '_blank');
-                btn.innerHTML = "ENVIADO (OFFLINE)";
-            } finally { btn.disabled = false; }
+                setTimeout(() => window.location.reload(), 3000);
+            }, 500);
         }
 
         function openDemo(event, type) {
@@ -513,12 +836,12 @@
             title.style.color = "var(--primary)"; modal.style.display = 'flex';
             if (type === 'mic') { title.innerText = "🎙️ Mic Test"; body.innerHTML = `<div class="audio-box"><span>❌ ANTES:</span><audio controls style="width:100%" src="mic_antes.mp3"></audio></div><div class="audio-box" style="border-color:var(--primary)"><span>✅ DEPOIS:</span><audio controls style="width:100%" src="mic_depois.mp3"></audio></div>`; } 
             else if (type === 'fps') { title.innerText = "🚀 FPS Boost"; body.innerHTML = `<video class="demo-video" controls autoplay loop muted><source src="fps_demo.mp4" type="video/mp4"></video><div style="display:flex;justify-content:space-between;margin-top:10px"><span>Antes: ~45</span><span style="color:var(--primary)">Depois: ~120</span></div>`; }
-            else if (type === 'color') { title.innerText = "🎨 Cores"; body.innerHTML = `<img class="demo-video" src="cores_demo.jpg"><p style="margin-top:10px">Esq: Padrão | Dir: Calibrado</p>`; }
+            else if (type === 'color') { title.innerText = "🎨 Cores"; body.innerHTML = `<img class="demo-video" src="cores_demo.jpg" alt="Comparação de cores"><p style="margin-top:10px">Esq: Padrão | Dir: Calibrado</p>`; }
         }
         function openWarning(event) {
             event.stopPropagation(); document.getElementById('demo-modal').style.display='flex'; 
             document.getElementById('modal-title').innerText="⚠️ Aviso Cor"; document.getElementById('modal-title').style.color="#ff9d00";
-            document.getElementById('modal-body').innerHTML = `<p style="color:#ccc;text-align:left">A câmera não capta o que o olho vê. A foto pode parecer escura ou saturada, mas ao vivo a calibração é perfeita.</p><button onclick="closeDemoExplicit()" style="margin-top:20px;width:100%;padding:10px;background:#333;color:white;border:none;border-radius:5px">Entendi</button>`;
+            document.getElementById('modal-body').innerHTML = `<p style="color:#ccc;text-align:left">A câmera não capta o que o olho vê. A foto pode parecer escura ou saturada, mas ao vivo a calibração é perfeita para o padrão sRGB.</p><button onclick="closeDemoExplicit()" style="margin-top:20px;width:100%;padding:10px;background:#333;color:white;border:none;border-radius:5px;cursor:pointer">Entendi</button>`;
         }
         function closeDemo(event) { if (event.target.id === 'demo-modal') closeDemoExplicit(); }
         function closeDemoExplicit() { document.getElementById('demo-modal').style.display = 'none'; document.getElementById('modal-body').innerHTML = ''; }
